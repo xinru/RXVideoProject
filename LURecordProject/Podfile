@@ -1,0 +1,8 @@
+target 'LURecordProject' do
+
+	pod 'Masonry'
+   	pod 'MBProgressHUD+JDragon'
+    pod 'YYModel'
+    pod 'IQKeyboardManager'
+
+end
