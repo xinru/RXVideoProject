@@ -97,6 +97,10 @@
 {
     self.playBtn.selected = isPlay;
 }
+- (void)setIsFullScreen:(BOOL)isFullScreen
+{
+    self.fullScreenBtn.selected = isFullScreen;
+}
 #pragma mark - action
 - (void)avSliderChangedAction
 {

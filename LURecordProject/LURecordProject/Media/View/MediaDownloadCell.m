@@ -72,7 +72,7 @@
         }];
         
         _cellView = [[UIView alloc] init];
-        _cellView.backgroundColor = UIColorFromRGB(0x1D1C1F);
+        _cellView.backgroundColor = UIColorFromRGB(0xFFFFFF);
         [self addSubview:_cellView];
         [_cellView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo(self);

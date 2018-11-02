@@ -59,8 +59,7 @@
 
     _UrlStr = @"http://v.dansewudao.com/444fccb3590845a799459f6154d2833f/fe86a70dc4b8497f828eaa19058639ba-6e51c667edc099f5b9871e93d0370245-sd.mp4";
     self.avPlayer.mediaUrlStr = [NSString stringWithFormat:@"%@",_UrlStr];
-//    [self dk_requestVideoDetial];
-//    [self dk_requestVideoRelationList];
+
 }
 
 #pragma mark - tableview
@@ -90,10 +89,7 @@
                                              titleColor:[UIColor blackColor]
                                               titleFont:[MyTool mediumFontWithSize:16*ScaleX]];
         [cell addSubview:downLoadBtn];
-//        downLoadBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-//        downLoadBtn.layer.borderWidth = 1;
-//        downLoadBtn.layer.masksToBounds = YES;
-//        downLoadBtn.layer.cornerRadius = 20*ScaleX;
+
         [downLoadBtn addTarget:self
                         action:@selector(clickedDownloadAction)
               forControlEvents:UIControlEventTouchDown];
@@ -128,6 +124,11 @@
    
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 0.01;
+}
+
 #pragma mark - action
 - (void)clickedDownloadAction
 {
@@ -156,7 +157,6 @@
         WS(weakSelf);
         [_avPlayer setClickedFullScreenBlock:^(BOOL isFullScreen) {
             if (isFullScreen) {
-
                 weakSelf.avPlayer.isFullScreen = YES;
                 weakSelf.fullPlayer = [[DKFullScreenVC alloc] init];
                 [weakSelf.fullPlayer.view addSubview:weakSelf.avPlayer];
@@ -172,24 +172,6 @@
 
                 }];
 
-            }
-        }];
-        
-        [_avPlayer setClickedZanCollectBlock:^(BOOL isZan, BOOL isCancel) {
-            if (isCancel) {
-                if (isZan) {
-//                    [weakSelf dk_requestRelationCancelLike];
-                }else{
-//                    [weakSelf dk_requestRelationCancelCollection];
-                }
-            }else{
-                NSInteger type;
-                if (isZan) {
-                    type = 3;
-                }else{
-                    type = 2;
-                }
-//                [weakSelf dk_requestRelationCommentWithDomainId:[weakSelf.videoId integerValue] andType:type];
             }
         }];
         

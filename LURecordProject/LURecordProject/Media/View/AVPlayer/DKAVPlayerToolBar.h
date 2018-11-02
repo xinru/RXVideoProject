@@ -35,6 +35,9 @@
 //切换清晰度按钮
 //@property (nonatomic, strong) UIButton *videoBtn;
 
+//是否是全局
+@property (nonatomic, assign) BOOL isFullScreen;
+
 @property (nonatomic, copy) void (^clickedPlayBtnBlock)(BOOL isPlay);
 @property (nonatomic, copy) void (^clickedSliderBlock)(float value);
 @property (nonatomic, copy) void (^clickedFullScreenBlock)(BOOL isFullScreen);

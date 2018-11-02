@@ -148,7 +148,7 @@ NSString *kMediaDownloadCell = @"MediaDownloadCell";
         _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, mainWidth, mainHeight) style:UITableViewStyleGrouped];
         _tableView.delegate = self;
         _tableView.dataSource = self;
-        _tableView.backgroundColor = UIColorFromRGB(0x1D1C1F);
+        _tableView.backgroundColor = UIColorFromRGB(0xFFFFFF);
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.rowHeight = 96*ScaleX;
         

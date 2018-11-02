@@ -45,8 +45,6 @@
 //暂停播放
 - (void)pausePlay;
 
-//点赞收藏处理
-@property (nonatomic, copy) void (^clickedZanCollectBlock)(BOOL isZan, BOOL isCancel);
 //切换清晰度
 //@property (nonatomic, copy) void (^changeVideoProfileBlock)(NSString *videoName);
 

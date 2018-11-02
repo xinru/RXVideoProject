@@ -53,5 +53,7 @@
 #endif
 
 
+#define kThemeBlueColor UIColorFromRGB(0x0E5BFF)
+
 //下载列表
 extern NSString *kDownloadVideoList;

@@ -47,6 +47,12 @@
     
     [self buildTimer];
 }
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [_timer invalidate];
+    _timer = nil;
+}
 - (void)avplayerToolBarShow
 {
     [self buildTimer];

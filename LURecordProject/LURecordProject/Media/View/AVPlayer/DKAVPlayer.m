@@ -46,8 +46,6 @@
 //返回按钮和标题
 @property (nonatomic, strong) UIButton *backBtn;
 @property (nonatomic, strong) UILabel *titleLabel;
-@property (nonatomic, strong) UIButton *zanBtn;
-@property (nonatomic, strong) UIButton *collectBtn;
 @property (nonatomic, strong) UIButton *downloadBtn;
 @property (nonatomic, strong) UIButton *shareBtn;
 
@@ -117,8 +115,6 @@
         [self addSubview:self.fullScreenTopView];
         [self.fullScreenTopView addSubview:self.backBtn];
         [self.fullScreenTopView addSubview:self.titleLabel];
-        [self.fullScreenTopView addSubview:self.zanBtn];
-        [self.fullScreenTopView addSubview:self.collectBtn];
         [self.fullScreenTopView addSubview:self.downloadBtn];
         [self.fullScreenTopView addSubview:self.shareBtn];
         [self addSubview:self.lockAndUnlockBtn];
@@ -144,16 +140,7 @@
             make.centerY.equalTo(self.backBtn);
             make.width.height.mas_equalTo(20*ScaleX);
         }];
-        [self.collectBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.downloadBtn.mas_left).offset(-20*ScaleX);
-            make.centerY.equalTo(self.backBtn);
-            make.width.height.mas_equalTo(20*ScaleX);
-        }];
-        [self.zanBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.collectBtn.mas_left).offset(-15*ScaleX);
-            make.centerY.equalTo(self.backBtn);
-            make.width.height.mas_equalTo(20*ScaleX);
-        }];
+        
         [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.top.equalTo(self.fullScreenTopView).offset(10*ScaleX);
             make.width.mas_equalTo(30*ScaleX);
@@ -161,7 +148,7 @@
         }];
         [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.backBtn.mas_right);
-            make.right.equalTo(self.zanBtn.mas_left).offset(-10*ScaleX);
+//            make.right.equalTo(self.zanBtn.mas_left).offset(-10*ScaleX);
             make.centerY.equalTo(self.backBtn);
         }];
 
@@ -316,6 +303,11 @@
     _mediaName = mediaName;
     self.titleLabel.text = mediaName;
 }
+- (void)setIsFullScreen:(BOOL)isFullScreen
+{
+    _isFullScreen = isFullScreen;
+    self.toolBar.isFullScreen = isFullScreen;
+}
 #pragma mark - 添加通知、kvo
 - (void)addNotifications
 {
@@ -392,7 +384,7 @@
         CMTime startTime = CMTimeMakeWithSeconds(value, _playerItem.currentTime.timescale);
         [_player seekToTime:startTime completionHandler:^(BOOL finished) {
             if (finished) {
-                if (_isPlay) {
+                if (self.isPlay) {
                     [self startPlay];
                 }else{
                     [self refreshSliderTime];
@@ -438,24 +430,6 @@
         }
         self.toolBar.hidden = NO;
     }
-}
-- (void)clickedZanAction
-{
-//    if (!_CustomerInfo.isLogIn) {
-//        [MBProgressHUD showWarnMessage:@"请先登录"];
-//        return ;
-//    }
-    self.zanBtn.selected = !_zanBtn.selected;
-    self.clickedZanCollectBlock(YES, !self.zanBtn.selected);
-}
-- (void)clickedCollectionAction
-{
-//    if (!_CustomerInfo.isLogIn) {
-//        [MBProgressHUD showWarnMessage:@"请先登录"];
-//        return ;
-//    }
-    self.collectBtn.selected = !_collectBtn.selected;
-    self.clickedZanCollectBlock(NO, !_collectBtn.selected);
 }
 
 - (void)clickedVideoProfileAction:(UIButton *)button
@@ -537,10 +511,12 @@
 }
 - (void)hideAVPlayerToolBar
 {
-    self.fullScreenTopView.hidden = YES;
-    self.videoBtn.hidden = YES;
-    self.lockAndUnlockBtn.hidden = YES;
-    self.toolBar.hidden = YES;
+    if (_isFullScreen) {
+        self.fullScreenTopView.hidden = YES;
+        self.videoBtn.hidden = YES;
+        self.lockAndUnlockBtn.hidden = YES;
+        self.toolBar.hidden = YES;
+    }
 }
 
 #pragma mark - touch event
@@ -611,29 +587,7 @@
     }
     return _titleLabel;
 }
-- (UIButton *)zanBtn
-{
-    if (!_zanBtn) {
-        _zanBtn = [MyTool buttonWithImage:[UIImage imageNamed:@"video_zan_white"]
-                            selectedImage:[UIImage imageNamed:@"zan_player"]];
-        [_zanBtn addTarget:self
-                    action:@selector(clickedZanAction)
-          forControlEvents:UIControlEventTouchDown];
-        
-    }
-    return _zanBtn;
-}
-- (UIButton *)collectBtn
-{
-    if (!_collectBtn) {
-        _collectBtn = [MyTool buttonWithImage:[UIImage imageNamed:@"video_collect_white"]
-                                selectedImage:[UIImage imageNamed:@"selectedCollect_player"]];
-        [_collectBtn addTarget:self
-                        action:@selector(clickedCollectionAction)
-              forControlEvents:UIControlEventTouchDown];
-    }
-    return _collectBtn;
-}
+
 - (UIButton *)downloadBtn
 {
     if (!_downloadBtn) {
@@ -703,8 +657,8 @@
         label.textAlignment = NSTextAlignmentCenter;
         [_videoProfileView addSubview:label];
         [label mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(_videoProfileView);
-            make.top.equalTo(_videoProfileView).offset(88*ScaleX);
+            make.left.right.equalTo(self->_videoProfileView);
+            make.top.equalTo(self->_videoProfileView).offset(88*ScaleX);
         }];
         NSArray *array = @[@"1080P", @"720P", @"480P"];
         _videoProfileArray = [NSMutableArray array];

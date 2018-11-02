@@ -25,6 +25,7 @@
 #import "ViewController.h"
 #import "MediaDetailVC.h"
 #import "Base/BaseNavViewController.h"
+#import "MediaDownloadVC.h"
 
 @interface ViewController ()
 
@@ -47,12 +48,30 @@
         make.top.equalTo(self.view).offset(100);
     }];
     
+    UIButton *listBtn = [MyTool buttonWithTitle:@"本地视频"];
+    [listBtn addTarget:self
+            action:@selector(enterVideoListVC)
+  forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:listBtn];
+    
+    [listBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.view);
+        make.top.equalTo(btn.mas_bottom).offset(30);
+    }];
+    
 }
 
 - (void)enterVideoVC
 {
     MediaDetailVC *detailVC = [[MediaDetailVC alloc] init];
     BaseNavViewController *navVC = [[BaseNavViewController alloc] initWithRootViewController:detailVC];
+    [self presentViewController:navVC animated:YES completion:nil];
+}
+
+- (void)enterVideoListVC
+{
+    MediaDownloadVC *downloadVC = [[MediaDownloadVC alloc] init];
+    BaseNavViewController *navVC = [[BaseNavViewController alloc] initWithRootViewController:downloadVC];
     [self presentViewController:navVC animated:YES completion:nil];
 }
 

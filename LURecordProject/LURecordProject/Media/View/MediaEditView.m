@@ -52,7 +52,7 @@
             make.left.equalTo(self).offset(15*ScaleX);
             make.right.equalTo(self).offset(-15*ScaleX);
             make.height.mas_equalTo(40*ScaleX);
-            make.centerY.equalTo(self).offset(-40*ScaleX);
+            make.top.equalTo(self);
         }];
         
         UIView *line = [[UIView alloc] init];
@@ -65,17 +65,37 @@
             make.height.mas_equalTo(0.5);
         }];
         
-        UIButton *sureBtn = [MyTool buttonWithTitle:@"确定"];
+        UIButton *sureBtn = [MyTool buttonWithTitle:@"确定"
+                                         titleColor:[UIColor whiteColor]
+                                          titleFont:[MyTool mediumFontWithSize:16*ScaleX]];
+        sureBtn.backgroundColor = kThemeBlueColor;
         [self addSubview:sureBtn];
         [sureBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.tf.mas_bottom).offset(15*ScaleX);
-            make.centerX.equalTo(self);
+            make.top.equalTo(self.tf.mas_bottom).offset(20*ScaleX);
+            make.left.equalTo(self).offset(30*ScaleX);
+            make.right.equalTo(self).offset(-30*ScaleX);
+            make.height.mas_equalTo(40*ScaleX);
         }];
-        [sureBtn addTarget:self action:@selector(dismissEditView) forControlEvents:UIControlEventTouchDown];
-//        self.userInteractionEnabled = YES;
-//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
-//                                                                              action:@selector(dismissEditView)];
-//        [self addGestureRecognizer:tap];
+        sureBtn.layer.cornerRadius = 20*ScaleX;
+        sureBtn.layer.masksToBounds = YES;
+        [sureBtn addTarget:self action:@selector(clickedSureBtnAction) forControlEvents:UIControlEventTouchDown];
+
+        UIButton *cancelBtn = [MyTool buttonWithTitle:@"取消"
+                                         titleColor:kThemeBlueColor
+                                          titleFont:[MyTool mediumFontWithSize:16*ScaleX]];
+//        cancelBtn.backgroundColor = kThemeBlueColor;
+        [self addSubview:cancelBtn];
+        [cancelBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(sureBtn.mas_bottom).offset(20*ScaleX);
+            make.left.equalTo(self).offset(30*ScaleX);
+            make.right.equalTo(self).offset(-30*ScaleX);
+            make.height.mas_equalTo(40*ScaleX);
+        }];
+        cancelBtn.layer.cornerRadius = 20*ScaleX;
+        cancelBtn.layer.masksToBounds = YES;
+        cancelBtn.layer.borderColor = kThemeBlueColor.CGColor;
+        cancelBtn.layer.borderWidth = 1;
+        [cancelBtn addTarget:self action:@selector(dismissEditView) forControlEvents:UIControlEventTouchDown];
     }
     
     return self;
@@ -93,10 +113,13 @@
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
     [window addSubview:self];
 }
-
-- (void)dismissEditView
+- (void)clickedSureBtnAction
 {
     self.getVideoNameBlock(_tf.text);
+    [self dismissEditView];
+}
+- (void)dismissEditView
+{
     if (self.superview != nil) {
         [self removeFromSuperview];
     }
