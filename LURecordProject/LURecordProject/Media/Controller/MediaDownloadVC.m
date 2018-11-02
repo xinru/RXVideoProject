@@ -149,7 +149,7 @@ NSString *kMediaDownloadCell = @"MediaDownloadCell";
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.backgroundColor = UIColorFromRGB(0xFFFFFF);
-        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.rowHeight = 96*ScaleX;
         
         _tableView.estimatedRowHeight = 0;

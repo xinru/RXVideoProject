@@ -78,13 +78,13 @@
             make.edges.equalTo(self);
         }];
         
-        UIView *line = [[UIView alloc] init];
-        line.backgroundColor = UIColorFromRGB(0x2D2C2F);
-        [self addSubview:line];
-        [line mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.bottom.equalTo(self);
-            make.height.mas_equalTo(0.5);
-        }];
+//        UIView *line = [[UIView alloc] init];
+//        line.backgroundColor = UIColorFromRGB(0x2D2C2F);
+//        [self addSubview:line];
+//        [line mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.left.right.bottom.equalTo(self);
+//            make.height.mas_equalTo(0.5);
+//        }];
         
         [_cellView addSubview:self.progressView];
         _titleLabel = [MyTool labelWithFont:[MyTool mediumFontWithSize:14*ScaleX]
