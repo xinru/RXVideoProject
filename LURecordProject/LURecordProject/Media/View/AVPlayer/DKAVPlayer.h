@@ -34,6 +34,7 @@
 @property (nonatomic, strong) NSString *mediaUrlStr;
 //视频名称
 @property (nonatomic, strong) NSString *mediaName;
+
 //不同清晰度的视频集
 @property (nonatomic, strong) NSDictionary *videoProfileUrlsDic;
 @property (nonatomic, strong) NSTimer *timer;
@@ -42,10 +43,16 @@
 @property (nonatomic, assign) BOOL isFullScreen;
 @property (nonatomic, copy) void (^clickedFullScreenBlock)(BOOL isFullScreen);
 
+//YES代表是直接进入全屏界面，NO代表是toolBar在做全屏播放处理
+@property (nonatomic, assign) BOOL isFullVC;
+
+//开始播放
+- (void)startPlay;
+
 //暂停播放
 - (void)pausePlay;
 
-//切换清晰度
+//切换清晰度-切换不同的视频地址
 //@property (nonatomic, copy) void (^changeVideoProfileBlock)(NSString *videoName);
 
 @end

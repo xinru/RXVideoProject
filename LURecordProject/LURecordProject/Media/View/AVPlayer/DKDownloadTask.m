@@ -82,13 +82,16 @@
     NSMutableArray *array = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kDownloadVideoList]];
     NSDictionary *dataDic = [array objectAtIndex:index];
     
+    [array removeObjectAtIndex:index];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:array] forKey:kDownloadVideoList];
+    
     NSString *filePath = dataDic[@"filePath"];
     BOOL isHave = [[NSFileManager defaultManager] fileExistsAtPath:filePath];
     if (isHave) {
         BOOL isDelte = [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
         if (isDelte) {
-            [array removeObjectAtIndex:index];
-            [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:array] forKey:kDownloadVideoList];
+//            [array removeObjectAtIndex:index];
+//            [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:array] forKey:kDownloadVideoList];
         }else{
 //            删除失败
         }

@@ -90,12 +90,17 @@
         
         self.backgroundColor = [UIColor clearColor];
 //        urlStr = @"http://v.dansewudao.com/444fccb3590845a799459f6154d2833f/fe86a70dc4b8497f828eaa19058639ba-6e51c667edc099f5b9871e93d0370245-sd.mp4";
-        _mediaUrlStr = urlStr;
+        
         _isReadToPlay = NO;
         _isFullScreen = NO;
         _isLocateVideo = NO;
         //播放器
-        _player = [[AVPlayer alloc] init];
+        if (urlStr.length > 0) {
+            _mediaUrlStr = urlStr;
+            _mediaUrl = [self getMediaURL:_mediaUrlStr];
+            self.playerItem = [AVPlayerItem playerItemWithURL:_mediaUrl];
+        }
+        _player = [[AVPlayer alloc] initWithPlayerItem:self.playerItem];
         
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
         _playerLayer.frame = self.bounds;
@@ -208,7 +213,7 @@
     return mediaUrl;
 }
 
-//创建AVPlayer播放器
+//更新playerItem
 - (void)buildAVPlayerWithMediaURL:(NSURL *)urlStr
 {
     if (urlStr == nil) {
@@ -414,6 +419,9 @@
 #pragma mark - action
 - (void)clickedBackBtnAction
 {
+    if (self.isFullVC) {
+        [self pausePlay];
+    }
     self.clickedFullScreenBlock(NO);
 }
 - (void)clickedLockAndUnlockBtnAction
@@ -481,6 +489,9 @@
                 NSLog(@"准备好播放了");
                 _isReadToPlay = YES;
                 self.failPlayView.hidden = YES;
+                if (self.isFullVC) {
+                    [self startPlay];
+                }
             }
                 break;
             case AVPlayerStatusUnknown:

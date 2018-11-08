@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		84BDBCAA21942DD8001404C1 /* MediaFullScreenVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BDBCA921942DD8001404C1 /* MediaFullScreenVC.m */; };
 		84E067BD2187FFA0002C06E5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E067BC2187FFA0002C06E5 /* AppDelegate.m */; };
 		84E067C02187FFA0002C06E5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E067BF2187FFA0002C06E5 /* ViewController.m */; };
 		84E067C32187FFA0002C06E5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84E067C12187FFA0002C06E5 /* Main.storyboard */; };
@@ -31,7 +32,6 @@
 		84E0685621885735002C06E5 /* MediaDownloadVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0682821885734002C06E5 /* MediaDownloadVC.m */; };
 		84E0685821885735002C06E5 /* MediaReportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0682E21885734002C06E5 /* MediaReportVC.m */; };
 		84E0685921885735002C06E5 /* MediaDetailVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0682F21885734002C06E5 /* MediaDetailVC.m */; };
-		84E0685A21885735002C06E5 /* area_city.json in Resources */ = {isa = PBXBuildFile; fileRef = 84E0683121885734002C06E5 /* area_city.json */; };
 		84E0685B21885735002C06E5 /* MediaDownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0683221885735002C06E5 /* MediaDownloadModel.m */; };
 		84E0685D21885735002C06E5 /* MediaModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0683721885735002C06E5 /* MediaModel.m */; };
 		84E0686221885735002C06E5 /* DKAVPlayerToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0684521885735002C06E5 /* DKAVPlayerToolBar.m */; };
@@ -66,6 +66,8 @@
 /* Begin PBXFileReference section */
 		2E4DC1F1D464FA880752CA94 /* libPods-LURecordProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LURecordProject.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		470C864A6D6E07A8BFD35A75 /* Pods-LURecordProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LURecordProject.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LURecordProject/Pods-LURecordProject.debug.xcconfig"; sourceTree = "<group>"; };
+		84BDBCA821942DD8001404C1 /* MediaFullScreenVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaFullScreenVC.h; sourceTree = "<group>"; };
+		84BDBCA921942DD8001404C1 /* MediaFullScreenVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaFullScreenVC.m; sourceTree = "<group>"; };
 		84E067B82187FFA0002C06E5 /* LURecordProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LURecordProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84E067BB2187FFA0002C06E5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		84E067BC2187FFA0002C06E5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -110,7 +112,6 @@
 		84E0682C21885734002C06E5 /* MediaDownloadVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDownloadVC.h; sourceTree = "<group>"; };
 		84E0682E21885734002C06E5 /* MediaReportVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaReportVC.m; sourceTree = "<group>"; };
 		84E0682F21885734002C06E5 /* MediaDetailVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaDetailVC.m; sourceTree = "<group>"; };
-		84E0683121885734002C06E5 /* area_city.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = area_city.json; sourceTree = "<group>"; };
 		84E0683221885735002C06E5 /* MediaDownloadModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaDownloadModel.m; sourceTree = "<group>"; };
 		84E0683421885735002C06E5 /* MediaModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaModel.h; sourceTree = "<group>"; };
 		84E0683521885735002C06E5 /* MediaDownloadModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDownloadModel.h; sourceTree = "<group>"; };
@@ -316,6 +317,8 @@
 				84E0682821885734002C06E5 /* MediaDownloadVC.m */,
 				84E0682A21885734002C06E5 /* MediaReportVC.h */,
 				84E0682E21885734002C06E5 /* MediaReportVC.m */,
+				84BDBCA821942DD8001404C1 /* MediaFullScreenVC.h */,
+				84BDBCA921942DD8001404C1 /* MediaFullScreenVC.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -323,7 +326,6 @@
 		84E0683021885734002C06E5 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				84E0683121885734002C06E5 /* area_city.json */,
 				84E0683421885735002C06E5 /* MediaModel.h */,
 				84E0683721885735002C06E5 /* MediaModel.m */,
 				84E0683521885735002C06E5 /* MediaDownloadModel.h */,
@@ -488,7 +490,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84E0682521885662002C06E5 /* DINPro-Regular.otf in Resources */,
-				84E0685A21885735002C06E5 /* area_city.json in Resources */,
 				84E067C82187FFA3002C06E5 /* LaunchScreen.storyboard in Resources */,
 				84E067C52187FFA3002C06E5 /* Assets.xcassets in Resources */,
 				84E0682321885662002C06E5 /* DINPro-Medium.otf in Resources */,
@@ -576,6 +577,7 @@
 				84E067BD2187FFA0002C06E5 /* AppDelegate.m in Sources */,
 				84E0686821885735002C06E5 /* MediaDownloadCell.m in Sources */,
 				84E0685821885735002C06E5 /* MediaReportVC.m in Sources */,
+				84BDBCAA21942DD8001404C1 /* MediaFullScreenVC.m in Sources */,
 				84E068142188533D002C06E5 /* UIView+YYAdd.m in Sources */,
 				84E993E1218AE7550016D4AE /* MediaEditView.m in Sources */,
 			);

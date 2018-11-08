@@ -26,6 +26,8 @@
 #import "MediaDetailVC.h"
 #import "Base/BaseNavViewController.h"
 #import "MediaDownloadVC.h"
+#import "DKAVPlayer.h"
+#import "DKFullScreenVC.h"
 
 @interface ViewController ()
 
@@ -59,6 +61,17 @@
         make.top.equalTo(btn.mas_bottom).offset(30);
     }];
     
+    UIButton *fullBtn = [MyTool buttonWithTitle:@"全屏视频"];
+    [fullBtn addTarget:self
+                action:@selector(enterFullScreenVideoVC)
+      forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:fullBtn];
+    
+    [fullBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.view);
+        make.top.equalTo(listBtn.mas_bottom).offset(30);
+    }];
+    
 }
 
 - (void)enterVideoVC
@@ -73,6 +86,22 @@
     MediaDownloadVC *downloadVC = [[MediaDownloadVC alloc] init];
     BaseNavViewController *navVC = [[BaseNavViewController alloc] initWithRootViewController:downloadVC];
     [self presentViewController:navVC animated:YES completion:nil];
+}
+
+- (void)enterFullScreenVideoVC
+{
+    DKAVPlayer *avPlayer = [[DKAVPlayer alloc] initWithFrame:CGRectMake(0, 0, mainHeight, mainWidth)
+                                      andMediaURL:@"http://v.dansewudao.com/444fccb3590845a799459f6154d2833f/fe86a70dc4b8497f828eaa19058639ba-6e51c667edc099f5b9871e93d0370245-sd.mp4"];
+    avPlayer.backgroundColor = UIColorFromRGB(0x1D1C1F);
+    avPlayer.isFullScreen = YES;
+    avPlayer.isFullVC = YES;
+    DKFullScreenVC *fullPlayer = [[DKFullScreenVC alloc] init];
+    [fullPlayer.view addSubview:avPlayer];
+    WS(weakSelf);
+    [avPlayer setClickedFullScreenBlock:^(BOOL isFullScreen) {
+        [weakSelf dismissViewControllerAnimated:NO completion:nil];
+    }];
+    [self presentViewController:fullPlayer animated:NO completion:nil];
 }
 
 @end
