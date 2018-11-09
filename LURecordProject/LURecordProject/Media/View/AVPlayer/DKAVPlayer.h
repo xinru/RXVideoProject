@@ -52,6 +52,9 @@
 //暂停播放
 - (void)pausePlay;
 
+//移除播放器
+- (void)removeAVPlayer;
+
 //切换清晰度-切换不同的视频地址
 //@property (nonatomic, copy) void (^changeVideoProfileBlock)(NSString *videoName);
 

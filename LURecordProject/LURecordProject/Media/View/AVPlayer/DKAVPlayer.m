@@ -416,6 +416,16 @@
         [self.toolBar setIsPlay:NO];
     }
 }
+#pragma mark - 移除视频播放
+- (void)removeAVPlayer
+{
+    [self pausePlay];
+    [self.playerItem cancelPendingSeeks];
+    [self.playerLayer removeFromSuperlayer];
+    self.playerLayer = nil;
+    self.player = nil;
+}
+
 #pragma mark - action
 - (void)clickedBackBtnAction
 {
