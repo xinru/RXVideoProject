@@ -36,6 +36,9 @@
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
+.xcuserstate
+xcschememanagement.plist
+
 # JIRA plugin
 atlassian-ide-plugin.xml
 
