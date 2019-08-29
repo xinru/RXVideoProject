@@ -1,53 +1,47 @@
+# Created by .ignore support plugin (hsz.mobi)
+### JetBrains template
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
-# Created by https://www.gitignore.io/api/xcode
+.idea/
+# User-specific stuff:
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
 
-### Xcode ###
-# Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# Sensitive or high-churn files:
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
 
-## Build generated
-build/
-DerivedData/
+# Gradle:
+.idea/**/gradle.xml
+.idea/**/libraries
 
-## Various settings
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata/
+# Mongo Explorer plugin:
+.idea/**/mongoSettings.xml
 
-## Other
-*.moved-aside
-*.xccheckout
-*.xcscmblueprint
+## File-based project format:
+*.iws
 
-### Xcode Patch ###
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcodeproj/xcshareddat
-!*/xcuserdata/admin.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlista/
-!*.xcworkspace/contents.xcworkspacedata
-/*.gcno
+## Plugin-specific files:
 
+# IntelliJ
+/out/
 
-# End of https://www.gitignore.io/api/xcode
+# mpeltonen/sbt-idea plugin
+.idea_modules/
 
+# JIRA plugin
+atlassian-ide-plugin.xml
 
-
-# Created by https://www.gitignore.io/api/cocoapods
-
-### CocoaPods ###
-## CocoaPods GitIgnore Template
-
-# CocoaPods - Only use to conserve bandwidth / Save time on Pushing
-#           - Also handy if you have a large number of dependant pods
-#           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGNORE THE LOCK FILE
-Pods/
-Podfile.lock
-
-# End of https://www.gitignore.io/api/cocoapods
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+#uploads
