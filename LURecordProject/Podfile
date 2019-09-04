@@ -4,5 +4,6 @@ target 'LURecordProject' do
    	pod 'MBProgressHUD+JDragon'
     pod 'YYModel'
     pod 'IQKeyboardManager'
+    pod 'YYCategories'
 
 end

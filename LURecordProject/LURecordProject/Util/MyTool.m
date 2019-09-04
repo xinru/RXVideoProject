@@ -25,7 +25,18 @@
 #import "MyTool.h"
 
 @implementation MyTool
-
++ (void)switchNewOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    
+    NSNumber *resetOrientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationUnknown];
+    
+    [[UIDevice currentDevice] setValue:resetOrientationTarget forKey:@"orientation"];
+    
+    NSNumber *orientationTarget = [NSNumber numberWithInt:interfaceOrientation];
+    
+    [[UIDevice currentDevice] setValue:orientationTarget forKey:@"orientation"];
+    
+}
 #pragma mark - Font
 + (UIFont *)lightFontWithSize:(CGFloat)size{
     UIFont *font = [UIFont fontWithName:@"PingFangSC-Light" size:size];
@@ -105,7 +116,20 @@
     
     return label;
 }
-
+//设置不同字体颜色
++(void)setTextColor:(UILabel *)label andFontNumber:(UIFont *)font andRangeStr:(NSString *)rangeStr andColor:(UIColor *)vaColor
+{
+    if (label.text.length > 0 && rangeStr.length > 0) {
+        NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:label.text];
+        NSRange range = [label.text rangeOfString:rangeStr];
+        //设置字号
+        [str addAttribute:NSFontAttributeName value:font range:range];
+        //设置文字颜色
+        [str addAttribute:NSForegroundColorAttributeName value:vaColor range:range];
+        label.attributedText = str;
+    }
+    
+}
 + (UIButton *)buttonWithTitle:(NSString *)title{
     return [self buttonWithTitle:title titleColor:UIColorFromRGB(0x333333)];
 }

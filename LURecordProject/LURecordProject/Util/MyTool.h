@@ -27,6 +27,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MyTool : NSObject
+
+/**
+ * @interfaceOrientation 输入要强制转屏的方向
+ */
++ (void)switchNewOrientation:(UIInterfaceOrientation)interfaceOrientation;
+
 #pragma mark - Font
 // 设置字体
 // 平方 细体
@@ -49,6 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (UILabel *)labelWithFont:(UIFont *)font
                       text:(NSString *)text
                  textColor:(UIColor*)textColor;
+//设置不同字体颜色
++(void)setTextColor:(UILabel *)label andFontNumber:(UIFont *)font andRangeStr:(NSString *)rangeStr andColor:(UIColor *)vaColor;
 
 // create button
 + (UIButton *)buttonWithTitle:(NSString *)title;

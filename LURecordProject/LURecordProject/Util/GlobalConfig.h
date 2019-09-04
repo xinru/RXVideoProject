@@ -41,6 +41,8 @@
 //带透明度的颜色
 #define UIColorFromRGBA(rgbValue,alphaValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:alphaValue]
 
+#define kYellowColor     UIColorFromRGB(0xFE7039)
+
 // console log
 #ifdef DEBUG
 #if TARGET_IPHONE_SIMULATOR
