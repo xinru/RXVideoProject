@@ -54,7 +54,9 @@
                                                  name:@"CHANGESTATUSBARHIDDEN"
                                                object:nil];
     
-    [self createPlayer];
+//    if (_avPlayer == nil) {
+//        [self createPlayer];
+//    }
     
 }
 
@@ -64,7 +66,7 @@
 }
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
+      [super viewWillAppear:animated];
 
 }
 - (void)viewWillDisappear:(BOOL)animated
@@ -94,16 +96,20 @@
 #pragma mark - 创建播放器
 - (void)createPlayer
 {
-    _avPlayer = [[DKAVPlayer alloc] initWithFrame:CGRectMake(0, 0, mainWidth, mainHeight) isFullScreen:YES];
-    _avPlayer.model = _model;
+    _avPlayer = [[DKAVPlayer alloc] initWithFrame:CGRectZero superView:self.view];
+    [_avPlayer prepareForPlayWithModel:_model isPlay:YES];
     [self.view addSubview:_avPlayer];
     WS(weakSelf);
-    _avPlayer.dismissFullScreenBlcok = ^{
+    _avPlayer.dismissFullScreenBlcok = ^(NSInteger currentValue) {
+
         if (weakSelf.quitFullScreenBlock) {
-            weakSelf.quitFullScreenBlock(weakSelf.avPlayer.currentValue);
+            weakSelf.quitFullScreenBlock(currentValue);
         }
         [weakSelf dismissViewControllerAnimated:NO completion:nil];
     };
+    [_avPlayer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
 }
 
 #pragma mark - 横屏代码

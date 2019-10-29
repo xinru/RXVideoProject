@@ -27,10 +27,11 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "DKSelectView.h"
 #import "UIAlertController+DY.h"
+#import "DKSmallToolBar.h"
 
 @interface DKAVPlayer()
 
-//视频截图
+//视频暂停中的图片
 @property (nonatomic, strong) UIImageView *mediaImageView;
 //视频加载失败显示图
 @property (nonatomic, strong) UIImageView *failPlayView;
@@ -39,8 +40,13 @@
 @property (nonatomic, strong) AVPlayerItem *playerItem;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 
+//全屏VC
+@property (nonatomic, strong) DKFullScreenVC *fullPlayerVC;
 //是否全屏
 @property (nonatomic, assign) BOOL isFullScreen;
+//父类 视频控制器的view，做竖屏、横屏切换的时候用到
+@property (nonatomic, strong) UIView *superView;
+//@property (nonatomic, assign) CGRect superFrame;
 
 //锁屏按钮
 @property (nonatomic, strong) UIButton *lockAndUnlockBtn;
@@ -53,20 +59,14 @@
 @property (nonatomic, strong) DKAVPlayerToolBar *toolBar;
 @property (nonatomic, strong) DKSmallToolBar *smallToolBar;
 
+
 //**********************参数************************
 
-//视频地址
-@property (nonatomic, strong) NSString *mediaUrlStr;
-//视频名称
-@property (nonatomic, strong) NSString *mediaName;
-//不同清晰度的视频集
-//@property (nonatomic, strong) TransData *videoProfileUrlsDic;
 //播放地址
 @property (nonatomic, strong) NSURL *mediaUrl;
 
 //是否准备好可以播放
 @property (nonatomic, assign) BOOL isReadToPlay;
-
 
 //总时长字符串 s 00:00:00
 @property (nonatomic, strong) NSString *totalMediaSeconds;
@@ -85,7 +85,7 @@
 @property (nonatomic, strong) NSTimer *toolBarTimer;
 
 //亮度、音量
-@property (nonatomic, assign) BOOL isStart;//滑动一次确定zao方向
+@property (nonatomic, assign) BOOL isStart;//滑动一次确定方向
 @property (assign, nonatomic) Direction direction;
 @property (assign, nonatomic) CGPoint startPoint;
 @property (assign, nonatomic) CGFloat startVB;
@@ -96,11 +96,21 @@
 //切换清晰度时候的提示语
 @property (nonatomic, strong) UILabel *tipLabel;
 
-//是否隐藏收藏
+//是否隐藏ToolBar
 @property (nonatomic, assign) BOOL HiddenToolBar;
 
 //w非WiFI状态下是否播放视频
 @property (nonatomic, assign) BOOL isWifiPlay;
+
+
+//模型传输
+@property (nonatomic, strong) DKVideoModel *model;
+
+@property (nonatomic, strong) AVPlayer *player;
+
+//当前播放的value，断点播放
+@property (nonatomic, assign) NSInteger currentValue;
+
 
 @end
 
@@ -114,9 +124,11 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame isFullScreen:(BOOL)isFullScreen
+- (instancetype)initWithFrame:(CGRect)frame superView:(UIView *)superView
 {
     if ([super initWithFrame:frame]) {
+        
+        self.superView = superView;
         
         self.backgroundColor = [UIColor blackColor];
 
@@ -125,11 +137,11 @@
         [session setCategory:AVAudioSessionCategoryPlayback error:nil];
         
         _isReadToPlay = NO;
-        _isFullScreen = isFullScreen;
+        _isFullScreen = NO;
         _isLocateVideo = NO;
         _videoRate = 1.0;//默认正常速度播放
         _totalSeconds = 0;
-//        _isWifiPlay = _CustomerInfo.isWifi;
+        _isWifiPlay = YES;
         //播放器
         _player = [[AVPlayer alloc] init];
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
@@ -142,35 +154,7 @@
         [self createSubViews];
         [self getSystemVolumSlider];
         
-        self.userInteractionEnabled = YES;
-        WS(weakSelf);
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithActionBlock:^(id  _Nonnull sender) {
-            if (weakSelf.lockAndUnlockBtn.selected == NO) {
-                if (!weakSelf.isPlaying) {
-                    [weakSelf startPlay];
-                }else{
-                    [weakSelf pausePlay];
-                }
-            }
-            
-        }];
-        tap.numberOfTapsRequired = 2;
-        [self addGestureRecognizer:tap];
-        
-        UITapGestureRecognizer *tapGest = [[UITapGestureRecognizer alloc] initWithActionBlock:^(id  _Nonnull sender) {
-            if (weakSelf.lockAndUnlockBtn.selected) {
-                weakSelf.lockAndUnlockBtn.hidden = NO;
-                weakSelf.toolBar.hidden = YES;
-            }else{
-                if (weakSelf.HiddenToolBar) {
-                    [weakSelf showToolBar];
-                }else{
-                    [weakSelf hideToolBar];
-                    
-                }
-            }
-        }];
-        [self addGestureRecognizer:tapGest];
+        [self addGestureRecognizerAction];
         
 //        测试视频地址
 //        DKVideoModel *model = [[DKVideoModel alloc] init];
@@ -179,6 +163,40 @@
 //        _model = model;
     }
     return self;
+}
+//屏幕单击、双击
+- (void)addGestureRecognizerAction
+{
+    self.userInteractionEnabled = YES;
+    WS(weakSelf);
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithActionBlock:^(id  _Nonnull sender) {
+        if (weakSelf.lockAndUnlockBtn.selected == NO) {
+            if (!weakSelf.isPlaying) {
+                [weakSelf startPlay];
+            }else{
+                [weakSelf pausePlay];
+            }
+        }
+        
+    }];
+    tap.numberOfTapsRequired = 2;
+    [self addGestureRecognizer:tap];
+    
+    UITapGestureRecognizer *tapGest = [[UITapGestureRecognizer alloc] initWithActionBlock:^(id  _Nonnull sender) {
+        if (weakSelf.lockAndUnlockBtn.selected) {
+            weakSelf.lockAndUnlockBtn.hidden = NO;
+            weakSelf.toolBar.hidden = YES;
+        }else{
+            if (weakSelf.HiddenToolBar) {
+                [weakSelf showToolBar];
+            }else{
+                [weakSelf hideToolBar];
+                
+            }
+        }
+    }];
+    [self addGestureRecognizer:tapGest];
+    
 }
 - (void)createSubViews
 {
@@ -197,29 +215,33 @@
     if (IS_IPHONE_X) {
         leftX += X_head;
     }
-    if (_isFullScreen) {
-        [self addSubview:self.toolBar];
-        //        锁屏
-        [self addSubview:self.lockAndUnlockBtn];
-        
-        [self.toolBar mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self);
-        }];
-        [self.lockAndUnlockBtn mas_makeConstraints:^(MASConstraintMaker *make){
-            make.left.equalTo(self).offset(leftX);
-            make.centerY.equalTo(self);
-        }];
-        
-    }else{
-        [self addSubview:self.smallToolBar];
-        [self.smallToolBar mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.bottom.equalTo(self);
-            make.height.mas_equalTo(40*ScaleX);
-        }];
-    }
+
+    //    底部控制栏
+    [self addSubview:self.toolBar];
+    //        锁屏
+    [self addSubview:self.lockAndUnlockBtn];
+
+    [self.toolBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self);
+    }];
+
+    
+    [self.lockAndUnlockBtn mas_makeConstraints:^(MASConstraintMaker *make){
+        make.left.equalTo(self).offset(leftX);
+        make.centerY.equalTo(self);
+    }];
+    self.toolBar.hidden = _HiddenToolBar;
+    _lockAndUnlockBtn.hidden = _HiddenToolBar;
+
+    [self addSubview:self.smallToolBar];
+    [self.smallToolBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.bottom.equalTo(self);
+        make.height.mas_equalTo(40*ScaleX);
+    }];
+
     
     //        切换清晰度的提示语
-    _tipLabel = [MyTool labelWithFont:[MyTool regularFontWithSize:13*ScaleX]
+    _tipLabel = [MyTool labelWithFont:[MyTool regularFontWithSize:13]
                                  text:@""
                             textColor:[UIColor whiteColor]];
     [self addSubview:_tipLabel];
@@ -252,9 +274,70 @@
     [_player replaceCurrentItemWithPlayerItem:_playerItem];
 
     [self addNotifications];
+
 }
 #pragma mark - //全屏处理
+- (void)layoutSubviews
+{
+    _playerLayer.frame = self.bounds;
+    if (_isFullScreen) {
+        self.toolBar.hidden = _HiddenToolBar;
+        self.lockAndUnlockBtn.hidden = _HiddenToolBar;
+        self.smallToolBar.hidden = YES;
+    }else{
+        self.toolBar.hidden = YES;
+        self.lockAndUnlockBtn.hidden = YES;
+        self.smallToolBar.hidden = NO;
 
+    }
+    
+}
+
+- (void)fullScreenAction
+{
+    if (_isFullScreen) {
+       //    全屏播放列表
+        _toolBar.dataArray = _sectionList;
+        _toolBar.selectedIndex = _sectionIndex;
+        
+        _toolBar.profileArray = _model.videoProfileUrlsArray;
+        
+        
+        _fullPlayerVC = [[DKFullScreenVC alloc] init];
+        [_fullPlayerVC.view addSubview:self];
+        [self mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(_fullPlayerVC.view);
+        }];
+        if (_isWifiPlay && _isPlaying == NO) {
+            [self startPlay];
+        }
+        self.toolBar.isPlaying = _isPlaying;
+        self.smallToolBar.isPlaying = _isPlaying;
+        UIViewController *vc = [[VCManager shareVCManager] getTopViewController];
+        [vc presentViewController:_fullPlayerVC animated:NO completion:nil];
+        
+        [self buildToolBarTimer];
+        
+    }else{
+        [_fullPlayerVC dismissViewControllerAnimated:NO completion:nil];
+        [_superView addSubview:self];
+        
+
+        CGFloat topY = 64;
+        if (IS_IPHONE_X) {
+            topY = 44 + X_head;
+        }
+        [self mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.left.equalTo(_superView);
+            make.top.equalTo(_superView).offset(topY);
+            make.height.mas_equalTo(210*ScaleX);
+        }];
+        
+        [_toolBarTimer invalidate];
+        _toolBarTimer = nil;
+    }
+    
+}
 //定时器功能，实现全屏播放时，5s以后隐藏导航栏
 - (void)buildToolBarTimer
 {
@@ -265,8 +348,8 @@
             weakSelf.timeNum ++;
             if (weakSelf.timeNum > 5) {
                 [weakSelf hideToolBar];
-                [_toolBarTimer invalidate];
-                _toolBarTimer = nil;
+                [weakSelf.toolBarTimer invalidate];
+                weakSelf.toolBarTimer = nil;
             }
         } repeats:YES];
         [[NSRunLoop currentRunLoop] addTimer:_toolBarTimer forMode:NSRunLoopCommonModes];
@@ -305,44 +388,55 @@
     
     _model.totalSeconds = _totalSeconds;
     _totalMediaSeconds = [NSString stringWithFormat:@"%02ld:%02ld:%02ld", _totalSeconds/60/60, _totalSeconds/60%60, _totalSeconds%60];
-    if (_isFullScreen) {
-        self.toolBar.avSlider.maximumValue = _totalSeconds;
+
+    self.toolBar.avSlider.maximumValue = _totalSeconds;
+    self.smallToolBar.avSlider.maximumValue = _totalSeconds;
+    self.smallToolBar.totalTimeStr = _totalMediaSeconds;
+    if (_currentValue > 0) {
+        NSString *valueTime = [NSString stringWithFormat:@"%02ld:%02ld:%02ld", _currentValue/60/60, _currentValue/60%60, _currentValue%60];
+        self.toolBar.timeStr = [NSString stringWithFormat:@"%@/%@",valueTime, _totalMediaSeconds];
+        self.toolBar.avSlider.value = _currentValue;
+        
+        self.smallToolBar.avSlider.value = _currentValue;
+        self.smallToolBar.timeStr = valueTime;
+    }else{
         self.toolBar.timeStr = [NSString stringWithFormat:@"00:00:00/%@", _totalMediaSeconds];
         self.toolBar.avSlider.value = 0;
-    }else{
-        self.smallToolBar.avSlider.maximumValue = _totalSeconds;
-        self.smallToolBar.totalTimeStr = _totalMediaSeconds;
+     
         self.smallToolBar.avSlider.value = 0;
+        self.smallToolBar.timeStr = [NSString stringWithFormat:@"00:00:00"];
     }
+
+    
+    
+
 }
-#pragma mark - setter
-- (void)setModel:(DKVideoModel *)model
+#pragma mark - 为播放做准备
+- (void)prepareForPlayWithModel:(DKVideoModel *)model isPlay:(BOOL)isPlay
+
 {
     _model = model;
     if (model.mediaUrlStr.length == 0) {
-//        self.mediaImageView.yy_imageURL = [NSURL URLWithString:model.mediaImage];
-        self.mediaImageView.hidden = NO;
+        self.failPlayView.hidden = NO;
         return;
     }
+    _isPlaying = isPlay;
     _totalSeconds = model.totalSeconds;
     _currentValue = model.currentSeconds;
 //解密处理是因为视频地址做了加密处理
 //    NSString * url = [mediaUrlStr copy];
 //    mediaUrlStr = [url LTAES128Decrypt];
-    _mediaUrlStr = model.mediaUrlStr;
-    _mediaUrl = [self getMediaURL:_mediaUrlStr];
     
-    _mediaName = model.mediaName;
-    self.toolBar.mediaName = _mediaName;
+
+    _mediaUrl = [self getMediaURL:model.mediaUrlStr];
     
+    self.toolBar.mediaName = _model.mediaName;
     
-    [self getVideoTotalTime:_mediaUrlStr];
+    [self getVideoTotalTime:model.mediaUrlStr];
     
     [self buildAVPlayerWithMediaURL:_mediaUrl];
 
-    
 }
-
 
 #pragma mark - 添加通知、kvo
 - (void)addNotifications
@@ -379,16 +473,8 @@
     
     _isPlaying = NO;
     if (_isReadToPlay) {
-        CGFloat value = _smallToolBar.avSlider.value;
-        if (_isFullScreen) {
-            value = _toolBar.avSlider.value;
-            _isPlaying = YES;
-        }
-        if (_currentValue > 0 && _currentValue > value) {
-            [self seekToTimePlay:_currentValue isPlaying:_isPlaying];
-        }else{
-            
-            if (_isWifiPlay) {
+
+        if (_isWifiPlay) {
             self.mediaImageView.hidden = YES;
             //        播放完成后，重新播放处理
             if (_currentValue >= _totalSeconds) {
@@ -396,7 +482,7 @@
             }
             [self buildPlayerTimer];
             
-                
+            
             [_player play];
             
             _isPlaying = YES;
@@ -404,32 +490,31 @@
             self.player.rate = _videoRate;
 
         }else{
-//            UIAlertController *alter = [UIAlertController alertMessage:@"当前为非WIFI状态，是否继续播放"
-//                                                           leftHandler:^(UIAlertAction *action) {
-//                                                               _isWifiPlay = NO;
-//                                                           }
-//                                                          rightHandler:^(UIAlertAction *action) {
-//                                                              _isWifiPlay =  YES;
+            WS(weakSelf);
+            UIAlertController *alter = [UIAlertController alertMessage:@"当前为非WIFI状态，是否继续播放"
+                                                           leftHandler:^(UIAlertAction *action) {
+                                                               weakSelf.isWifiPlay = NO;
+                                                           }
+                                                          rightHandler:^(UIAlertAction *action) {
+                                                              weakSelf.isWifiPlay =  YES;
 //                                                              _CustomerInfo.isWifi = YES;
-//                                                              [self startPlay];
-//                                                          }
-//                                                             leftTitle:@"取消"
-//                                                            rightTitle:@"继续播放"];
-//
-//            [[[VCManager shareVCManager] getTopViewController] presentViewController:alter animated:YES completion:nil];
+                                                              [self startPlay];
+                                                          }
+                                                             leftTitle:@"取消"
+                                                            rightTitle:@"继续播放"];
+            
+            [[[VCManager shareVCManager] getTopViewController] presentViewController:alter animated:YES completion:nil];
         }
-        
-        }
+ 
     }else{
         if (_isFullScreen == NO) {
             [MBProgressHUD showInfoMessage:@"视频正在加载中"];
         }
     }
-    if (_isFullScreen) {
-        self.toolBar.isPlaying = _isPlaying;
-    }else{
-        self.smallToolBar.isPlaying = _isPlaying;
-    }
+   
+    self.toolBar.isPlaying = _isPlaying;
+    self.smallToolBar.isPlaying = _isPlaying;
+    
 }
 
 //暂停播放
@@ -439,11 +524,10 @@
     [self cancelTimer];
     [_player pause];
  
-    if (_isFullScreen) {
-        self.toolBar.isPlaying = _isPlaying;
-    }else{
-        self.smallToolBar.isPlaying = _isPlaying;
-    }
+  
+    self.toolBar.isPlaying = _isPlaying;
+    self.smallToolBar.isPlaying = _isPlaying;
+   
     
 }
 - (void)buildPlayerTimer
@@ -470,9 +554,10 @@
 {
     if (value <= _totalSeconds) {
         CMTime startTime = CMTimeMakeWithSeconds(value, _playerItem.currentTime.timescale);
+        WS(weakSelf);
         [_player seekToTime:startTime completionHandler:^(BOOL finished) {
             if (finished) {
-                _tipLabel.hidden = YES;
+                weakSelf.tipLabel.hidden = YES;
                 [self refreshSliderTime];
                 if (isPlaying) {
                     [self startPlay];
@@ -505,6 +590,12 @@
         [self pausePlay];
         [self.toolBar setIsPlaying:NO];
         self.smallToolBar.isPlaying = NO;
+        
+        _sectionIndex = _sectionIndex+1;
+        if (_sectionIndex >= _sectionList.count) {
+            _sectionIndex = _sectionList.count-1;
+        }
+        [self refreshVideoUrlWithIndex:_sectionIndex];
     }
 }
 
@@ -532,16 +623,28 @@
 //更换视频地址
 - (void)refreshVideoUrlWithIndex:(NSInteger)index
 {
-//    self.sectionIndex = index;
-//    SectionBrif *model = [self.sectionList objectAtIndex:index];
-//    if (model.isTry || _isBuy) {
-//        if (self.refreshVideoUrlBlcok) {
-//            self.refreshVideoUrlBlcok(model.sectionId);
-//        }
-//    }else{
-//        [MBProgressHUD showWarnMessage:@"您还没有购买将要播放的视频"];
-//    }
+    self.sectionIndex = index;
+    DKVideoModel *listModel = [self.sectionList objectAtIndex:index];
+
+    if (self.refreshVideoUrlBlcok) {
+        self.refreshVideoUrlBlcok(index);
+    }
+    [self prepareForPlayWithModel:listModel isPlay:_isPlaying];
     
+}
+
+//视频进度更改（UI效果）
+- (void)reloadRateOfVideoUI:(CGFloat)value
+{
+    [self showToolBar];
+    if (_isFullScreen) {
+        self.sliderView.type = IconTypeValue;
+        self.sliderView.totalTime = self.totalMediaSeconds;
+        self.sliderView.value = value;
+    }
+    self.smallToolBar.timeStr = [NSString stringWithFormat:@"%02d:%02d:%02d", (int)value/60/60, (int)value/60, (int)value%60];
+    self.toolBar.avSlider.value = value;
+    self.toolBar.timeStr = [NSString stringWithFormat:@"%02d:%02d:%02d/%@", (int)value/60/60, (int)value/60%60, (int)value%60, self.totalMediaSeconds];
 }
 #pragma mark - kvo 通知方法
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
@@ -562,7 +665,7 @@
                 NSLog(@"准备好播放了");
                 _isReadToPlay = YES;
                 self.failPlayView.hidden = YES;
-                if (_isFullScreen) {
+                if (_isFullScreen || _isPlaying) {
                     [self startPlay];
                 }
                 
@@ -580,6 +683,8 @@
                 break;
         }
     }
+    
+
     
 //    else if([keyPath isEqualToString:@"loadedTimeRanges"]){
 //        NSArray *array = playerItem.loadedTimeRanges;
@@ -628,6 +733,7 @@
 //    NSLog(@"11111111");
     self.HiddenToolBar = YES;
     if (_isFullScreen) {
+    
         [_toolBarTimer invalidate];
         _toolBarTimer = nil;
         self.lockAndUnlockBtn.hidden = YES;
@@ -642,9 +748,13 @@
 }
 - (void)showToolBar
 {
-//    NSLog(@"000000000");
+    if (self.HiddenToolBar == NO) {
+        return;
+    }
+
     self.HiddenToolBar = NO;
     if (_isFullScreen) {
+        self.toolBar.hidden = NO;
         self.lockAndUnlockBtn.hidden = NO;
         [self.toolBar toolBarAnimationWithHidden:NO];
         [self buildToolBarTimer];
@@ -661,12 +771,9 @@
 #pragma mark - touch event
 
 #pragma mark - 手势改变音量、亮度、快进快退
-
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+
 {
-    if (!_isFullScreen) {
-        return;
-    }
     _isStart = NO;
     UITouch *touch = [touches anyObject];
     CGPoint point = [touch locationInView:self];
@@ -675,6 +782,9 @@
     
     self.startPoint = point;
     
+    if (!_isFullScreen) {
+        return;
+    }
     //检测用户是触摸屏幕的左边还是右边，以此判断用户是要调节音量还是亮度，左边是亮度，右边是音量
     if (self.startPoint.x <= self.frame.size.width / 2.0) {
         //亮度
@@ -692,7 +802,7 @@
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    if (!_isFullScreen || _lockAndUnlockBtn.selected) {
+    if (_lockAndUnlockBtn.selected) {
         return;
     }
     UITouch *touch = [touches anyObject];
@@ -712,8 +822,10 @@
             //音量和亮度
             self.direction = DirectionUpOrDown;
             _isStart = YES;
+            return;
         } else {
             self.direction = DirectionNone;
+            return;
         }
     }
     
@@ -782,9 +894,10 @@
                 self.seekValue = 0;
             }
         }
-        self.sliderView.type = IconTypeValue;
-        self.sliderView.totalTime = self.totalMediaSeconds;
-        self.sliderView.value = self.seekValue;
+        
+        [self reloadRateOfVideoUI:self.seekValue];
+        
+        
         
     }
     
@@ -792,16 +905,14 @@
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    if (!_isFullScreen || _lockAndUnlockBtn.selected) {
+    if ( _lockAndUnlockBtn.selected) {
         return;
     }
     if (self.direction == DirectionLeftOrRight) {
         
         [self seekToTimePlay:self.seekValue isPlaying:_isPlaying];
-//        [self showToolBar];
-        //        [self.avPlayer seekToTime:CMTimeMakeWithSeconds(self.total * self.currentRate, 1) completionHandler:^(BOOL finished) {
-        //            //在这里处理进度设置成功后的事情
-        //        }];
+        [self showToolBar];
+
     }
     //     音量和亮度
     [_sliderView removeFromSuperview];
@@ -881,16 +992,12 @@
 //         快进快退，滑动的时候暂停播放只更改进度条边上的时间显示，当手指移开的时候已最后一的value值做快进快退操作，避免视频出现闪现的bug（因为快进快退是延迟的）
         [_toolBar setClickedSliderBlock:^(float value) {
             [weakSelf seekToTimePlay:value isPlaying:weakSelf.isPlaying];
-            if (weakSelf.isFullScreen) {
+//            if (weakSelf.isFullScreen) {
                 [weakSelf.sliderView removeFromSuperview];
                 weakSelf.sliderView = nil;
-            }
+//            }
         }];
-        [_toolBar setClickedSliderValueBlock:^(float value) {
-            weakSelf.sliderView.type = IconTypeValue;
-            weakSelf.sliderView.totalTime = weakSelf.totalMediaSeconds;
-            weakSelf.sliderView.value = value;
-        }];
+        
         //播放/暂停
         [_toolBar setClickedPlayBtnBlock:^(BOOL isPlay) {
             if (isPlay) {
@@ -901,9 +1008,8 @@
         }];
 //        点击返回，退出全屏
         [_toolBar setClickedBackBlock:^{
-            if (weakSelf.dismissFullScreenBlcok) {
-                weakSelf.dismissFullScreenBlcok();
-            }
+            weakSelf.isFullScreen = NO;
+            [weakSelf fullScreenAction];
         }];
 //        倍速播放
         [_toolBar setChangeVideoRateBlock:^(float rate) {
@@ -917,7 +1023,7 @@
             [MyTool setTextColor:weakSelf.tipLabel
                    andFontNumber:weakSelf.tipLabel.font
                      andRangeStr:videoName
-                        andColor:kYellowColor];
+                        andColor:kVideoMainColor];
 //            if ([videoName isEqualToString:@"标清"]) {
 //                weakSelf.mediaUrlStr = weakSelf.videoProfileUrlsDic.s480;
 //            }else if ([videoName isEqualToString:@"高清"]) {
@@ -925,17 +1031,18 @@
 //            }else{
 //                weakSelf.mediaUrlStr = weakSelf.videoProfileUrlsDic.s1080;
 //            }
-            [weakSelf seekToTimePlay:weakSelf.currentValue isPlaying:_isPlaying];
+            [weakSelf seekToTimePlay:weakSelf.currentValue isPlaying:weakSelf.isPlaying];
         }];
         
 //        播放下一级
         [_toolBar setClickedNextVideoBlock:^{
-//            weakSelf.sectionIndex ++;
-//            if (weakSelf.sectionIndex > weakSelf.sectionList.count-1) {
-//                [MBProgressHUD showWarnMessage:@"没有下一个了~"];
-//            }else{
-//                [weakSelf refreshVideoUrlWithIndex:weakSelf.sectionIndex];
-//            }
+            weakSelf.sectionIndex ++;
+            if (weakSelf.sectionIndex > weakSelf.sectionList.count-1) {
+                weakSelf.sectionIndex --;
+                [MBProgressHUD showWarnMessage:@"没有下一个了~"];
+            }else{
+                [weakSelf refreshVideoUrlWithIndex:weakSelf.sectionIndex];
+            }
         }];
         _toolBar.refreshVideoUrlBlock = ^(NSInteger index) {
             [weakSelf refreshVideoUrlWithIndex:index];
@@ -955,9 +1062,9 @@
             [weakSelf seekToTimePlay:value isPlaying:weakSelf.isPlaying];
         }];
         [_smallToolBar setClickedValueSliderBlock:^(float value) {
-            [weakSelf.player pause];
-            weakSelf.smallToolBar.timeStr = [NSString stringWithFormat:@"%02d:%02d:%02d", (int)value/60/60, (int)value/60, (int)value%60];
+            [weakSelf reloadRateOfVideoUI:value];
         }];
+       
         //播放/暂停
         [_smallToolBar setClickedPlayBtnBlock:^(BOOL isPlay) {
             if (isPlay) {
@@ -968,27 +1075,12 @@
         }];
 //        全屏
         [_smallToolBar setClickedFullScreenBlock:^{
-            [weakSelf pausePlay];
-            DKFullScreenVC *fullPlayerVC = [[DKFullScreenVC alloc] init];
-            weakSelf.model.currentSeconds = weakSelf.currentValue;
-            fullPlayerVC.model = weakSelf.model;
-            fullPlayerVC.quitFullScreenBlock = ^(CGFloat value) {
-                [weakSelf seekToTimePlay:value isPlaying:YES];
-            };
-            UIViewController *vc = [[VCManager shareVCManager] getTopViewController];
-            [vc presentViewController:fullPlayerVC animated:NO completion:nil];
-    
+            weakSelf.isFullScreen = YES;
+            [weakSelf fullScreenAction];
         }];
     }
     return _smallToolBar;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end

@@ -10,6 +10,9 @@
 #import <objc/runtime.h>
 // view
 #import "AppDelegate.h"
+
+#import "VCManager.h"
+
 #import <IQKeyboardManager.h>
 
 static char *btnClickAction;
@@ -21,24 +24,19 @@ static char *btnClickAction;
 @property (nonatomic, assign) BOOL statusBarHidden;
 
 
-
 @end
 
 @implementation BaseViewController
 #pragma mark - ♻️life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //
-    self.view.backgroundColor = UIColorFromRGB(0xFFFFFF);
+    self.view.backgroundColor = [UIColor whiteColor];
     // 初始化导航栏
     [self p_setNavBar];
-    
+    [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
     [IQKeyboardManager sharedManager].enable = YES;
+    [IQKeyboardManager sharedManager].shouldShowToolbarPlaceholder = NO;
     
-    
-//    [self.navigationController.navigationBar setShadowImage:[self imageWithColor:UIColorFromRGB(0x1D1C1F)]];
-    
-    [UIApplication sharedApplication].statusBarStyle =  UIStatusBarStyleLightContent;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -57,148 +55,76 @@ static char *btnClickAction;
 
 #pragma mark - 🔄overwrite
 //是否隐藏状态栏
-//- (BOOL)prefersStatusBarHidden {
-//    return self.statusBarHidden;
-//}
-//
-////状态栏的样式
-//- (UIStatusBarStyle)preferredStatusBarStyle {
-//    if (self.statusBarStyle) {
-//        return self.statusBarStyle;
-//    } else {
-//        return UIStatusBarStyleDefault;
-//    }
-//}
+- (BOOL)prefersStatusBarHidden {
+    return self.statusBarHidden;
+}
 
+//状态栏的样式
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    if (self.statusBarStyle) {
+        return self.statusBarStyle;
+    } else {
+        return UIStatusBarStyleDefault;
+    }
+}
 #pragma mark - public method
--(void)setNavigationBarColor:(UIColor *)color{
-    self.navigationController.navigationBar.barTintColor = color;
-}
-
--(void)setNavigationBarImage:(UIImage *)image{
-    [self.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
-    // 隐藏导航栏上的线
-    [self.navigationController.navigationBar setShadowImage:[[UIImage alloc]init]];
-}
-
--(void)setNavigationBarTitleAttributes:(NSDictionary *)attributes{
-    [self.navigationController.navigationBar setTitleTextAttributes:attributes];
-}
-
 -(void)setLeftButtonWithTitle:(NSString *)title
                         Image:(NSString *)image
                 SelectedImage:(NSString *)selectedImage
-                       Action:(void (^)(void))btnClickBlock{
-    self.navLeftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.navLeftBtn setBackgroundColor:[UIColor clearColor]];
-    
-    objc_setAssociatedObject(self.navLeftBtn, &btnClickAction, btnClickBlock, OBJC_ASSOCIATION_COPY);
-    [self setCustomButton:self.navLeftBtn Title:title Image:image SelectedImage:selectedImage];
-    [self.navLeftBtn setTitleColor:UIColorFromRGB(0xAAAAAA) forState:UIControlStateNormal];
-    self.navLeftBtn.titleLabel.font = [MyTool regularFontWithSize:14*ScaleX];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.navLeftBtn];
+                       Action:(void (^)(void))btnClickBlock
+{
+    [_bar.leftBtn setTitle:title forState:UIControlStateNormal];
+    [_bar.leftBtn setImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
+    [_bar.leftBtn setImage:[UIImage imageNamed:selectedImage] forState:UIControlStateSelected];
 
-    if ([image isEqualToString:@"nav_back"]) {
-        self.tempbtn = [[UIButton alloc]init];
-        _tempbtn.frame = CGRectMake(15*ScaleX, 25*ScaleX, 44*ScaleX, 44*ScaleX);
-        _tempbtn.backgroundColor = [UIColor clearColor];
-        [[UIApplication sharedApplication].keyWindow addSubview:_tempbtn];
-        [_tempbtn addTarget:self action:@selector(goBack) forControlEvents:UIControlEventTouchUpInside];
-    }else{
-        [_tempbtn removeFromSuperview];
-        _tempbtn = nil;
-
-    }
-
+    _bar.leftBtnBlock = btnClickBlock;
 }
 
 -(void)setRightButtonWithTitle:(NSString *)title
                          Image:(NSString *)image
                  SelectedImage:(NSString *)selectedImage
-                        Action:(void (^)(void))btnClickBlock{
-    self.navRightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    objc_setAssociatedObject(self.navRightBtn, &btnClickAction, btnClickBlock, OBJC_ASSOCIATION_COPY);
-    [self setCustomButton:self.navRightBtn Title:title Image:image SelectedImage:selectedImage];
-    [self.navRightBtn setTitleColor:UIColorFromRGB(0xAAAAAA) forState:UIControlStateNormal];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.navRightBtn];
-}
-
-#pragma mark - private method
--(void)p_setNavBar{//0x1D1C1F
-//    [self setNavigationBarColor:[UIColor colorWithRed:27.0/255.0 green:26.0/255.0 blue:30.0/255.0 alpha:1.0]];
-    [self setNavigationBarTitleAttributes:@{NSForegroundColorAttributeName:[UIColor blackColor],
-                                            NSFontAttributeName:[MyTool mediumFontWithSize:18*ScaleX]}];
-    //统一设置导航栏
-    self.navigationController.navigationBar.translucent = NO;
-    self.extendedLayoutIncludesOpaqueBars = YES;//不透明设置解决界面下移问题
-//    self.navigationController.navigationBar.barTintColor = UIColorFromRGB(0x1D1C21);
-    //[UIColor colorWithRed:29.0/255.0 green:28.0/255.0 blue:40.0/255.0 alpha:1.0]
-    //统一设置返回按钮
-    //    if (self.navigationController.childViewControllers.count > 1) {
-    __weak typeof(self) weakSelf = self;
-
-    [self setLeftButtonWithTitle:nil Image:@"nav_back" SelectedImage:@"" Action:^{
-        [weakSelf clickAction_leftItemClick];
-    }];
-
-    //    }
-    
-    /////////////
-    //再定义一个imageview来等同于这个黑线
-//    UIImageView *navBarHairlineImageView;
-//    navBarHairlineImageView = [self findHairlineImageViewUnder:self.navigationController.navigationBar];
-//    navBarHairlineImageView.hidden = YES;
-    
-//    self.separateLine.frame = CGRectMake(0,
-//                                         44,
-//                                         mainWidth,
-//                                         0.5);
-//    [self.navigationController.navigationBar addSubview:self.separateLine];
-}
--(void)goBack
+                        Action:(void (^)(void))btnClickBlock
 {
-     [self clickAction_leftItemClick];
-    [_tempbtn removeFromSuperview];
+    [_bar.rightBtn setTitle:title forState:UIControlStateNormal];
+    [_bar.rightBtn setImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
+    [_bar.rightBtn setImage:[UIImage imageNamed:selectedImage] forState:UIControlStateSelected];
+
+    _bar.rightBtnBlock = btnClickBlock;
+    
 }
-// 通过一个方法来找到这个黑线(findHairlineImageViewUnder):
-- (UIImageView *)findHairlineImageViewUnder:(UIView *)view {
-    if ([view isKindOfClass:UIImageView.class] && view.bounds.size.height <= 1.0) {
-        return (UIImageView *)view;
+- (void)setBarType:(NavBarType)barType
+{
+    _bar.barType = barType;
+}
+- (void)hiddenBavBar
+{
+    _bar.hidden = YES;
+    _bar.height = 0;
+}
+#pragma mark - private method
+-(void)p_setNavBar
+{
+    self.navigationController.navigationBarHidden = YES;
+//    初始化
+    CGFloat height = 64;
+    if (IS_IPHONE_X) {
+        height = X_head+44;
     }
-    for (UIView *subview in view.subviews) {
-        UIImageView *imageView = [self findHairlineImageViewUnder:subview];
-        if (imageView) {
-            return imageView;
-        }
-    }
-    return nil;
+    _bar = [[RootNavBar alloc] initWithFrame:CGRectMake(0, 0, mainWidth, height)];
+    [self.view addSubview:_bar];
+//    title
+    _bar.title = self.title;
+//    左侧返回事件
+    WS(weakSelf);
+    _bar.leftBtnBlock = ^{
+        [weakSelf clickAction_leftItemClick];
+    };
+    
+    _navLeftBtn = _bar.leftBtn;
+    _navRightBtn = _bar.rightBtn;
+    
 }
 
--(void)setCustomButton:(UIButton *)button
-                 Title:(NSString *)title
-                 Image:(NSString *)image
-         SelectedImage:(NSString *)selectedImage{
-    if (image) {
-        [button setImage:[[UIImage imageNamed:image]
-                          imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
-                forState:UIControlStateNormal];
-    }
-    if (selectedImage) {
-        [button setImage:[[UIImage imageNamed:selectedImage]
-                          imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
-                forState:UIControlStateHighlighted];
-    }
-    
-    if (title) {
-        button.titleLabel.font = [MyTool mediumFontWithSize:14];
-        [button setTitle:title forState:UIControlStateNormal];
-        [button setTitle:title forState:UIControlStateHighlighted];
-        [button setTitleColor:UIColorFromRGB(0xAAAAAA) forState:UIControlStateNormal];
-        [button setTitleColor:UIColorFromRGB(0xAAAAAA) forState:UIControlStateHighlighted];
-    }
-    [button sizeToFit];
-    [button addTarget:self action:@selector(actionBtnClick:) forControlEvents:UIControlEventTouchUpInside];
-}
 
 #pragma mark - 🎬event response
 - (void)clickAction_leftItemClick{
@@ -207,14 +133,10 @@ static char *btnClickAction;
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
+
 }
 
-- (void)actionBtnClick:(UIButton *)btn {
-    void (^btnClickBlock) (void) = objc_getAssociatedObject(btn, &btnClickAction);
-    btnClickBlock();
-}
-
-#pragma mark - touchesBegan -
+#pragma mark - touchesBegan 
 //统一处理键盘
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -247,14 +169,6 @@ static char *btnClickAction;
 }
 
 #pragma mark - ☸getter and setter
-- (UIView *)separateLine{
-    if (!_separateLine) {
-        _separateLine = [[UILabel alloc] init];
-        _separateLine.backgroundColor = UIColorFromRGB(0x333236);
-    }
-    
-    return _separateLine;
-}
 
 - (CGFloat)bottomOffset{
     if (IS_IPHONE_X) {
@@ -264,6 +178,7 @@ static char *btnClickAction;
 }
 
 
+
 -(NSMutableArray *)textArr{
     if (_textArr == nil) {
         _textArr = [[NSMutableArray alloc] init];
@@ -271,16 +186,5 @@ static char *btnClickAction;
     return _textArr;
 }
 
-- (UIImage *)imageWithColor:(UIColor *)color {
-    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
-    UIGraphicsBeginImageContext(rect.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(context, [color CGColor]);
-    CGContextFillRect(context, rect);
-    UIImage *theImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return theImage;
-}
-    
 @end
 

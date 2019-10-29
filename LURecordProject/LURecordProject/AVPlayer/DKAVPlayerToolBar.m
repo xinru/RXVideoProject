@@ -24,6 +24,7 @@
 
 #import "DKAVPlayerToolBar.h"
 
+
 @interface DKAVPlayerToolBar()
 
 //头部
@@ -38,14 +39,14 @@
 @property (nonatomic, strong) UIButton *playBtn;
 //时长
 @property (nonatomic, strong) UILabel *timeLabel;
-////下一个视频
-//@property (nonatomic, strong) UIButton *nextBtn;
-////切换清晰度按钮
-//@property (nonatomic, strong) UIButton *definitionBtn;
-////倍速按钮
-//@property (nonatomic, strong) UIButton *speedBtn;
-////选集
-//@property (nonatomic, strong) UIButton *anthonyBtn;
+//下一个视频
+@property (nonatomic, strong) UIButton *nextBtn;
+//切换清晰度按钮
+@property (nonatomic, strong) UIButton *definitionBtn;
+//倍速按钮
+@property (nonatomic, strong) UIButton *speedBtn;
+//选集
+@property (nonatomic, strong) UIButton *anthonyBtn;
 
 //倍速数组 1.0 1.25 1.5 2.0
 @property (nonatomic, strong) NSArray *rateArray;
@@ -69,11 +70,12 @@
         
         [_headView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.top.equalTo(self);
-            make.height.mas_equalTo(50*ScaleX);
+            make.width.mas_equalTo(50*ScaleX);
         }];
+//        _headView.backgroundColor = [UIColor orangeColor];
         [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_headView).offset(15*ScaleX);
-            make.top.equalTo(_headView).offset(15*ScaleX);
+            make.top.equalTo(_headView).offset(20*ScaleX);
             make.width.height.mas_equalTo(30*ScaleX);
         }];
         [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -89,26 +91,27 @@
         [_bottomView addSubview:self.playBtn];
         [_bottomView addSubview:self.avSlider];
         [_bottomView addSubview:self.timeLabel];
-//        [_bottomView addSubview:self.nextBtn];
-//        [_bottomView addSubview:self.definitionBtn];
-//        [_bottomView addSubview:self.speedBtn];
-//        [_bottomView addSubview:self.anthonyBtn];
+        [_bottomView addSubview:self.nextBtn];
+        [_bottomView addSubview:self.definitionBtn];
+        [_bottomView addSubview:self.speedBtn];
+        [_bottomView addSubview:self.anthonyBtn];
         
         [_bottomView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.bottom.equalTo(self);
-            make.height.mas_equalTo(60*ScaleX);
+            make.height.mas_equalTo(40*ScaleX);
         }];
         [self.playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_bottomView).offset(15*ScaleX);
-            make.width.height.mas_equalTo(30*ScaleX);
+            make.width.height.mas_equalTo(30);
             make.bottom.equalTo(_bottomView).offset(-5*ScaleX);
         }];
-//        [self.nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.left.equalTo(self.playBtn.mas_right).offset(30*ScaleX);
-//            make.centerY.equalTo(self.playBtn);
-//        }];
+//        self.playBtn.backgroundColor = [UIColor blackColor];
+        [self.nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.playBtn.mas_right).offset(10*ScaleX);
+            make.centerY.equalTo(self.playBtn);
+        }];
         [self.timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.playBtn.mas_right).offset(15*ScaleX);
+            make.left.equalTo(self.nextBtn.mas_right).offset(15*ScaleX);
             make.centerY.equalTo(self.playBtn);
         }];
         [self.avSlider mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -117,39 +120,40 @@
             make.height.mas_equalTo(20*ScaleX);
             make.bottom.equalTo(self.playBtn.mas_top).offset(-0*ScaleX);
         }];
-//        [self.anthonyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.right.equalTo(self.avSlider.mas_right);
-//            make.centerY.equalTo(self.playBtn);
-//        }];
-//        [self.speedBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.right.equalTo(self.anthonyBtn.mas_left).offset(-30*ScaleX);
-//            make.centerY.equalTo(self.playBtn);
-//        }];
-//        [self.definitionBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.right.equalTo(self.speedBtn.mas_left).offset(-30*ScaleX);
-//            make.centerY.equalTo(self.playBtn);
-//        }];
+        [self.anthonyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.avSlider.mas_right);
+            make.centerY.equalTo(self.playBtn);
+        }];
+        [self.speedBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.anthonyBtn.mas_left).offset(-30);
+            make.centerY.equalTo(self.playBtn);
+        }];
+        [self.definitionBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.speedBtn.mas_left).offset(-30);
+            make.centerY.equalTo(self.playBtn);
+        }];
         
     }
     return self;
 }
 - (void)toolBarAnimationWithHidden:(BOOL)isHidden
 {
+    WS(weakSelf);
     if (isHidden) {
         [UIView animateWithDuration:0.6
                          animations:^{
-                             _headView.y = -60*ScaleX;
-                             _bottomView.y = self.height;
-                             _bottomView.hidden = YES;
-                             _headView.hidden = YES;
+                             weakSelf.headView.y = -60*ScaleX;
+                             weakSelf.bottomView.y = self.height;
+                             weakSelf.bottomView.hidden = YES;
+                             weakSelf.headView.hidden = YES;
                          }];
     }else{
         [UIView animateWithDuration:0.6
                          animations:^{
-                             _headView.y = 0;
-                             _bottomView.y = self.height - _bottomView.height;
-                             _headView.hidden = NO;
-                             _bottomView.hidden = NO;
+                             weakSelf.headView.y = 0;
+                             weakSelf.bottomView.y = self.height - weakSelf.bottomView.height;
+                             weakSelf.headView.hidden = NO;
+                             weakSelf.bottomView.hidden = NO;
                          }];
     }
 }
@@ -159,6 +163,7 @@
 {
     self.timeLabel.text = timeStr;
 }
+
 - (void)setIsPlaying:(BOOL)isPlaying
 {
     self.playBtn.selected = isPlaying;
@@ -167,20 +172,34 @@
 {
     self.titleLabel.text = mediaName;
 }
+- (void)setDataArray:(NSArray *)dataArray
+{
+    _dataArray = dataArray;
+    if (_dataArray.count <= 0) {
+        self.anthonyBtn.hidden = YES;
+    }
+}
+- (void)setProfileArray:(NSArray *)profileArray
+{
+    _profileArray = profileArray;
+    if (profileArray.count <= 0) {
+        self.definitionBtn.hidden = YES;
+    }
+}
 #pragma mark - action
-- (void)avSliderChangedAction
+- (void)avSliderChangedAction:(CGFloat)value
 {
     if (self.clickedSliderBlock) {
-        self.clickedSliderBlock(self.avSlider.value);
+        self.clickedSliderBlock(value);
     }
     
 }
-- (void)avSliderValueChangingAction
-{
-    if (self.clickedSliderValueBlock) {
-        self.clickedSliderValueBlock(self.avSlider.value);
-    }
-}
+//- (void)avSliderValueChangingAction:(CGFloat)value
+//{
+//    if (self.clickedSliderValueBlock) {
+//        self.clickedSliderValueBlock(value);
+//    }
+//}
 - (void)playerBtnAction:(UIButton *)btn
 {
     if (self.clickedPlayBtnBlock) {
@@ -224,7 +243,7 @@
         WS(weakSelf);
         [_selectView setRefreshVideoRateBlock:^(NSString * _Nonnull rateStr, NSInteger index) {
             weakSelf.rateIndex = index;
-//                [weakSelf.speedBtn setTitle:rateStr forState:UIControlStateNormal];
+                [weakSelf.speedBtn setTitle:rateStr forState:UIControlStateNormal];
             
                 CGFloat rate = 1.0;
                 switch (index) {
@@ -349,28 +368,25 @@
 - (UILabel *)titleLabel
 {
     if (!_titleLabel) {
-        _titleLabel = [MyTool labelWithFont:[MyTool mediumFontWithSize:14*ScaleX]
-                                       text:@"1.3 437947r03ur03"
+        _titleLabel = [MyTool labelWithFont:[MyTool regularFontWithSize:16*ScaleX]
+                                       text:@"两面性"
                                   textColor:UIColorFromRGB(0xFFFFFF)];
     }
     return _titleLabel;
 }
-- (UISlider *)avSlider
+- (RXSlider *)avSlider
 {
     if (!_avSlider) {
-        _avSlider = [[UISlider alloc] init];
+        _avSlider = [[RXSlider alloc] init];
         _avSlider.minimumValue = 0;
         _avSlider.maximumTrackTintColor = [UIColor whiteColor];
-        _avSlider.tintColor = kYellowColor;
+        _avSlider.tintColor = UIColorFromRGB(0x1890FF);
         [_avSlider setThumbImage:[UIImage imageNamed:@"slider_thumb"] forState:UIControlStateNormal];
-        [_avSlider addTarget:self
-                      action:@selector(avSliderChangedAction)
-            forControlEvents:UIControlEventTouchUpInside|
-         UIControlEventTouchCancel|
-         UIControlEventTouchUpOutside];
-        [_avSlider addTarget:self
-                      action:@selector(avSliderValueChangingAction)
-            forControlEvents:UIControlEventValueChanged];
+        WS(weakSelf);
+        [_avSlider setSliderChangedBlock:^(CGFloat value) {
+            [weakSelf avSliderChangedAction:value];
+        }];
+
     }
     return _avSlider;
 }
@@ -394,211 +410,61 @@
         _timeLabel = [[UILabel alloc] init];
 //        _timeLabel.textAlignment = NSTextAlignmentCenter;
         _timeLabel.textColor = [UIColor whiteColor];
-        _timeLabel.font = [UIFont systemFontOfSize:10*ScaleX];
+        _timeLabel.font = [UIFont systemFontOfSize:12*ScaleX];
     }
     return _timeLabel;
 }
 
-//- (UIButton *)definitionBtn
-//{
-//    if (!_definitionBtn) {
-//        _definitionBtn = [MyTool buttonWithTitle:@"标清"
-//                                      titleColor:kWhiteColor
-//                                       titleFont:[MyTool mediumFontWithSize:14*ScaleX]];
-//        [_definitionBtn addTarget:self action:@selector(clickedVideoProfileAction:) forControlEvents:UIControlEventTouchDown];
-//    }
-//    return _definitionBtn;
-//}
-//
-//- (UIButton *)nextBtn
-//{
-//    if (!_nextBtn) {
-//        _nextBtn = [MyTool buttonWithImage:[UIImage imageNamed:@"next_video"]
-//                             selectedImage:[UIImage imageNamed:@"next_video"]];
-//        [_nextBtn addTarget:self
-//                     action:@selector(clickedNextVideoAction)
-//           forControlEvents:UIControlEventTouchDown];
-//
-//    }
-//    return _nextBtn;
-//}
-//
-//- (UIButton *)speedBtn
-//{
-//    if (!_speedBtn) {
-//        _speedBtn = [MyTool buttonWithTitle:@"1.0x"
-//                                 titleColor:kWhiteColor
-//                                  titleFont:[MyTool mediumFontWithSize:14*ScaleX]];
-//        [_speedBtn addTarget:self
-//                      action:@selector(clickedSpeedBtnAction)
-//            forControlEvents:UIControlEventTouchDown];
-//    }
-//    return _speedBtn;
-//}
-//
-//- (UIButton *)anthonyBtn
-//{
-//    if (!_anthonyBtn) {
-//        _anthonyBtn = [MyTool buttonWithTitle:@"选集"
-//                                   titleColor:kWhiteColor
-//                                    titleFont:[MyTool mediumFontWithSize:14*ScaleX]];
-//        [_anthonyBtn addTarget:self
-//                        action:@selector(anthonyBtnAction)
-//              forControlEvents:UIControlEventTouchDown];
-//    }
-//    return _anthonyBtn;
-//}
-
-
-
-
-@end
-
-@interface DKSmallToolBar()
-
-//播放按钮
-@property (nonatomic, strong) UIButton *playBtn;
-//全屏按钮
-@property (nonatomic, strong) UIButton *fullScreenBtn;
-//总时长
-@property (nonatomic, strong) UILabel *totalTimeLabel;
-//播放时长
-@property (nonatomic, strong) UILabel *timeLabel;
-
-@end
-
-@implementation DKSmallToolBar
-
-- (instancetype)init
+- (UIButton *)definitionBtn
 {
-    if ([super init]) {
-        
-        UIImageView *bottomView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bottom_bg"]];
-        [self addSubview:bottomView];
-        [bottomView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self);
-        }];
-        
-        _playBtn = [MyTool buttonWithImage:[UIImage imageNamed:@"start_play"]
-                             selectedImage:[UIImage imageNamed:@"pause_play"]];
-        [_playBtn addTarget:self
-                     action:@selector(playerBtnAction:)
+    if (!_definitionBtn) {
+        _definitionBtn = [MyTool buttonWithTitle:@"标清"
+                                      titleColor:[UIColor whiteColor] 
+                                       titleFont:[MyTool mediumFontWithSize:14*ScaleX]];
+        [_definitionBtn addTarget:self action:@selector(clickedVideoProfileAction:) forControlEvents:UIControlEventTouchDown];
+    }
+    return _definitionBtn;
+}
+
+- (UIButton *)nextBtn
+{
+    if (!_nextBtn) {
+        _nextBtn = [MyTool buttonWithImage:[UIImage imageNamed:@"next_video"]
+                             selectedImage:[UIImage imageNamed:@"next_video"]];
+        [_nextBtn addTarget:self
+                     action:@selector(clickedNextVideoAction)
            forControlEvents:UIControlEventTouchDown];
-        [self addSubview:_playBtn];
-        
-        _timeLabel = [MyTool labelWithFont:[MyTool regularFontWithSize:13*ScaleX]
-                                      text:@"00:00:00"
-                                 textColor:[UIColor whiteColor]];
-        [self addSubview:_timeLabel];
-        
-        [self addSubview:self.avSlider];
-        
-        _totalTimeLabel = [MyTool labelWithFont:[MyTool regularFontWithSize:13*ScaleX]
-                                           text:@"00:00:00"
-                                 textColor:[UIColor whiteColor]];
-        [self addSubview:_totalTimeLabel];
-        
-        _fullScreenBtn = [MyTool buttonWithImage:[UIImage imageNamed:@"fullScreen"]
-                                   selectedImage:[UIImage imageNamed:@"fullScreen"]];
-        [_fullScreenBtn addTarget:self
-                           action:@selector(clickedFullScreenAction)
-                 forControlEvents:UIControlEventTouchDown];
-        [self addSubview:_fullScreenBtn];
-        
-        [_playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self).offset(15*ScaleX);
-            make.bottom.top.equalTo(self);
-        }];
-        [_timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_playBtn.mas_right).offset(20*ScaleX);
-            make.centerY.equalTo(_playBtn);
-            make.width.mas_equalTo(60*ScaleX);
-        }];
-        [_fullScreenBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self).offset(-15*ScaleX);
-            make.top.bottom.equalTo(self);
-        }];
-        [_totalTimeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(_fullScreenBtn.mas_left).offset(-20*ScaleX);
-            make.centerY.equalTo(_fullScreenBtn);
-            make.width.mas_equalTo(60*ScaleX);
-        }];
-        [self.avSlider mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_timeLabel.mas_right).offset(10*ScaleX);
-            make.right.equalTo(_totalTimeLabel.mas_left).offset(-15*ScaleX);
-            make.top.bottom.equalTo(self);
-        }];
-    }
-    return self;
-}
-#pragma mark - setter
 
-- (void)setTimeStr:(NSString *)timeStr
-{
-    self.timeLabel.text = timeStr;
-}
-- (void)setTotalTimeStr:(NSString *)totalTimeStr
-{
-    self.totalTimeLabel.text = totalTimeStr;
-}
-- (void)setIsPlaying:(BOOL)isPlaying
-{
-    self.playBtn.selected = isPlaying;
+    }
+    return _nextBtn;
 }
 
-#pragma mark - action
-//快进快退
-- (void)avSliderChangedAction
+- (UIButton *)speedBtn
 {
-    if (self.clickedValueSliderBlock) {
-        self.clickedValueSliderBlock(self.avSlider.value);
+    if (!_speedBtn) {
+        _speedBtn = [MyTool buttonWithTitle:@"1.0x"
+                                 titleColor:[UIColor whiteColor]
+                                  titleFont:[MyTool mediumFontWithSize:14*ScaleX]];
+        [_speedBtn addTarget:self
+                      action:@selector(clickedSpeedBtnAction)
+            forControlEvents:UIControlEventTouchDown];
     }
+    return _speedBtn;
 }
-- (void)avSliderReloadAction
+
+- (UIButton *)anthonyBtn
 {
-    if (self.clickedSliderBlock) {
-        self.clickedSliderBlock(self.avSlider.value);
+    if (!_anthonyBtn) {
+        _anthonyBtn = [MyTool buttonWithTitle:@"选集"
+                                   titleColor:[UIColor whiteColor]
+                                    titleFont:[MyTool mediumFontWithSize:14*ScaleX]];
+        [_anthonyBtn addTarget:self
+                        action:@selector(anthonyBtnAction)
+              forControlEvents:UIControlEventTouchDown];
     }
+    return _anthonyBtn;
 }
-//暂停播放
-- (void)playerBtnAction:(UIButton *)btn
-{
-    if (self.clickedPlayBtnBlock) {
-        self.clickedPlayBtnBlock(!btn.selected);
-    }
-    
-}
-//全屏
-- (void)clickedFullScreenAction
-{
-    if (self.clickedFullScreenBlock) {
-        self.clickedFullScreenBlock();
-    }
-}
-#pragma mark - getter
-- (UISlider *)avSlider
-{
-    if (!_avSlider) {
-        _avSlider = [[UISlider alloc] init];
-        _avSlider.minimumValue = 0;
-        _avSlider.maximumTrackTintColor = [UIColor whiteColor];
-        _avSlider.tintColor = kYellowColor;
-        [_avSlider setThumbImage:[UIImage imageNamed:@"slider_thumb"] forState:UIControlStateNormal];
-//        [_avSlider addTarget:self
-//                      action:@selector(avSliderChangedAction)
-//            forControlEvents:UIControlEventTouchUpInside|
-//         UIControlEventTouchCancel|
-//         UIControlEventTouchUpOutside|UIControlEventValueChanged];
-        [_avSlider addTarget:self
-                      action:@selector(avSliderChangedAction)
-            forControlEvents:
-         UIControlEventValueChanged];
-        [_avSlider addTarget:self
-                      action:@selector(avSliderReloadAction)
-            forControlEvents:
-         UIControlEventTouchUpInside];
-    }
-    return _avSlider;
-}
+
 
 @end
+

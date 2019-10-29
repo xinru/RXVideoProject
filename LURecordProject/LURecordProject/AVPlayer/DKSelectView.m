@@ -120,9 +120,9 @@
         }else{
             cell.isSelected = NO;
         }
+        DKVideoModel *model = [_dataArray objectAtIndex:indexPath.row];
+        [cell reloadData:model index:indexPath.row+1];
         
-//        SectionBrif *model = [_dataArray objectAtIndex:indexPath.row];
-//        cell.model = model;
         
         return cell;
     }else{
@@ -139,7 +139,7 @@
             make.center.equalTo(cell);
         }];
         if (_selectedIndex == indexPath.row) {
-            rateLabel.textColor = kYellowColor;
+            rateLabel.textColor = kVideoMainColor;
         }else{
             rateLabel.textColor = [UIColor whiteColor];
         }
@@ -150,8 +150,11 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (_selectViewType == SelectViewTypeAnthony) {
-        return 45*ScaleX;
-    }else{
+        return 35*ScaleX;
+    }else if (_selectViewType == SelectViewTypeRate){
+        return 30*ScaleX;
+    }
+    else{
         return 35*ScaleX;
     }
 }
@@ -208,9 +211,9 @@
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = [UIColor clearColor];
         
-        _icon = [[UIImageView alloc] init];
-//        _icon.backgroundColor = kYellowColor;
-        [self addSubview:_icon];
+//        _icon = [[UIImageView alloc] init];
+////        _icon.backgroundColor = kYellowColor;
+//        [self addSubview:_icon];
         
         _titleLabel = [MyTool labelWithFont:[MyTool mediumFontWithSize:7*ScaleX]
                                        text:@"1.1 肌骨疼痛之软组织评估思路及方法 "
@@ -223,22 +226,22 @@
                                  textColor:[UIColor whiteColor]];
         [self addSubview:_timeLabel];
         
-        [_icon mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.top.equalTo(self).offset(8*ScaleX);
-            make.width.mas_equalTo(60*ScaleX);
-            make.height.mas_equalTo(35*ScaleX);
-        }];
-        _icon.layer.cornerRadius = 4*ScaleX;
-        _icon.layer.masksToBounds = YES;
+//        [_icon mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.left.top.equalTo(self).offset(8*ScaleX);
+//            make.width.mas_equalTo(60*ScaleX);
+//            make.height.mas_equalTo(35*ScaleX);
+//        }];
+//        _icon.layer.cornerRadius = 4*ScaleX;
+//        _icon.layer.masksToBounds = YES;
         
         [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_icon.mas_right).offset(5*ScaleX);
+            make.left.equalTo(self).offset(10*ScaleX);
             make.right.equalTo(self).offset(-8*ScaleX);
-            make.top.equalTo(_icon);
+            make.top.equalTo(self).offset(10*ScaleX);
         }];
         [_timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_titleLabel.mas_left);
-            make.bottom.equalTo(_icon.mas_bottom);
+            make.bottom.equalTo(self);
         }];
     }
     
@@ -248,34 +251,20 @@
 - (void)setIsSelected:(BOOL)isSelected
 {
     if (isSelected) {
-        _titleLabel.textColor = kYellowColor;
-        _timeLabel.textColor = kYellowColor;
+        _titleLabel.textColor = kVideoMainColor;
+        _timeLabel.textColor = kVideoMainColor;
     }else{
         _titleLabel.textColor = [UIColor whiteColor];
         _timeLabel.textColor = [UIColor whiteColor];
     }
 }
-//- (void)setModel:(SectionBrif *)model
-//{
-//    NSDictionary *dic = [model.thumb jsonStringToDictonary];
-//    NSString *imgStr = dic[@"file"];
-//    if (![imgStr hasPrefix:@"http"]) {
-//        imgStr = [NSString stringWithFormat:@"%@%@", BASE_PIC_URL, imgStr];
-//    }
-//    [_icon yy_setImageWithURL:[NSURL URLWithString:imgStr] placeholder:[UIImage imageNamed:@"章节封面"]];
-////    _icon.yy_imageURL = [NSURL URLWithString:imgStr];
-//    _titleLabel.text = model.title;
-//    NSInteger duration = model.duration;
-//    
-//    
-//    long seconds = duration % 60;
-//    long minutes = (duration / 60) % 60;
-//    long hours = duration / 3600;
-//    
-//    _timeLabel.text =  [NSString stringWithFormat:@"%02ld:%02ld:%02ld",hours, minutes, seconds];
-//    
-////    _timeLabel.text = [NSString stringWithFormat:@"时长：%.2ld:%.2ld:%.2ld", duration/60/60, duration/60, duration % 60];
-//}
+
+
+- (void)reloadData:(DKVideoModel *)model index:(NSInteger)index
+{
+    _titleLabel.text = [NSString stringWithFormat:@"%ld. %@", index, model.mediaName];
+    _timeLabel.text = [NSString stringWithFormat:@"%lds", model.totalSeconds];
+}
 
 @end
 
@@ -299,7 +288,7 @@
             UIButton *btn = [MyTool buttonWithTitle:array[i]
                                          titleColor:UIColorFromRGB(0xFFFFFF)
                                           titleFont:[MyTool mediumFontWithSize:7*ScaleX]];
-            [btn setTitleColor:kYellowColor forState:UIControlStateSelected];
+            [btn setTitleColor:kVideoMainColor forState:UIControlStateSelected];
             [self addSubview:btn];
             
             [btn addTarget:self action:@selector(changeVideoProfileAction:) forControlEvents:UIControlEventTouchDown];
@@ -395,7 +384,7 @@
         
         _slider = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         [self addSubview:_slider];
-        _slider.progressTintColor = kYellowColor;
+        _slider.progressTintColor = kVideoMainColor;
         _slider.trackTintColor = UIColorFromRGBA(0xFFFFFF, 0.2);
         
         _label = [MyTool labelWithFont:[MyTool semiboldFontWithSize:9*ScaleX]
@@ -441,7 +430,7 @@
         [MyTool setTextColor:_label
                andFontNumber:_label.font
                  andRangeStr:str
-                    andColor:kYellowColor];
+                    andColor:kVideoMainColor];
     }else{
         _slider.progress = value;
         _slider.hidden = NO;

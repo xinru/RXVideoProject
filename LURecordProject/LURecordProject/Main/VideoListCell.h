@@ -15,28 +15,25 @@
  *                                       *
  *****************************************/
 //
-//  DKFullPlayerVC.h
+//  VideoListCell.h
 //  DookayProject
 //
-//  Created by dookay_73 on 2018/10/9.
-//  Copyright © 2018年 Dookay. All rights reserved.
+//  Created by dookay_73 on 2019/9/20.
+//  Copyright © 2019 Dookay. All rights reserved.
 //
 
-typedef NS_ENUM(NSUInteger, Direction) {
-    DirectionLeftOrRight,
-    DirectionUpOrDown,
-    DirectionNone
-};
-
 #import <UIKit/UIKit.h>
-#import "DKAVPlayer.h"
-#import <UIKit/UIView.h>
-@interface DKFullScreenVC : UIViewController
+#import "DKVideoModel.h"
 
-@property (nonatomic, assign) BOOL statusBarHidden;
+NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, strong) DKVideoModel *model;
+#define kVideoListCellID   @"kVideoListCellID"
 
-@property (nonatomic, copy) void (^quitFullScreenBlock)(CGFloat value);
+@interface VideoListCell : UITableViewCell
+
+- (void)reloadData:(DKVideoModel *)courseModel  index:(NSInteger)index;
+
 
 @end
+
+NS_ASSUME_NONNULL_END

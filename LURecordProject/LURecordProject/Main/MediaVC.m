@@ -34,8 +34,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    DKAVPlayer *player = [[DKAVPlayer alloc] initWithFrame:CGRectMake(0, 0, mainWidth, 200*ScaleX) isFullScreen:NO];
-    [self.view addSubview:player];
+//    DKAVPlayer *player = [[DKAVPlayer alloc] initWithFrame:CGRectMake(0, 0, mainWidth, 200*ScaleX) isFullScreen:NO];
+//    [self.view addSubview:player];
 }
 
 /*

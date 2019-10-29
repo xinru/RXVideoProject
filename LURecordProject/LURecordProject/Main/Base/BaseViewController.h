@@ -7,31 +7,28 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RootNavBar.h"
 
 @interface BaseViewController : UIViewController
 
+@property (nonatomic, strong) RootNavBar *bar;
+
 /**
- 默认为空，需要gif动画的子类添加
+ 顶部 bar 类型
  */
-@property(nonatomic,strong) NSMutableArray *refreshImages;
+@property (nonatomic, assign) NavBarType barType;
+
 /**
- 默认为空，需要gif动画的子类添加
+ 顶部 bar 的左右按钮 默认左侧返回  右侧隐藏
  */
-@property(nonatomic,strong) NSMutableArray *normalImages;
-@property (nonatomic, strong) UIView *separateLine;
 @property (nonatomic,strong) UIButton *navLeftBtn;
 @property (nonatomic,strong) UIButton *navRightBtn;
 
-@property (nonatomic, readonly, assign) CGFloat bottomOffset; // 距离底部的偏移，iphoex为-39,其他为0
-@property (nonatomic,strong) NSMutableArray *textArr;
-@property (nonatomic, strong) UIButton *tempbtn;
 
-//设置导航栏颜色
--(void)setNavigationBarColor:(UIColor *)color;
-//设置导航栏图片
--(void)setNavigationBarImage:(UIImage *)image;
-//设置导航栏富文本
--(void)setNavigationBarTitleAttributes:(NSDictionary *)attributes;
+@property (nonatomic, readonly, assign) CGFloat bottomOffset; // 距离底部的偏移，iphoex为-39,其他为0
+
+@property (nonatomic,strong) NSMutableArray *textArr;
+
 //设置导航栏左按钮
 -(void)setLeftButtonWithTitle:(NSString *)title
                         Image:(NSString *)image
@@ -42,6 +39,11 @@
                          Image:(NSString *)image
                  SelectedImage:(NSString *)selectedImage
                         Action:(void(^)(void))btnClickBlock;
+
+//左侧按钮的点击事件，可重写
+- (void)clickAction_leftItemClick;
+
+- (void)hiddenBavBar;
 
 /**
  * 功能：设置修改StatusBar
@@ -60,8 +62,7 @@
  */
 - (void)setStatusBarBackgroundColor:(UIColor *)color;
 
-- (void)clickAction_leftItemClick;
 
+- (BOOL)checkAllText;
 
-- (void)actionBtnClick:(UIButton *)btn;
 @end

@@ -26,6 +26,7 @@
 #import "MediaListVC.h"
 #import "MediaVC.h"
 #import "DKFullScreenVC.h"
+#import "DKVideoDetailVC.h"
 
 @interface MediaListVC ()<UITableViewDelegate, UITableViewDataSource>
 
@@ -40,7 +41,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.title = @"视频播放器";
+//    self.bar.title = @"视频播放器";
     
     _dataArray = @[@"观看视频",@"全屏视频",@"本地视频"];
     [self tableView];
@@ -77,7 +78,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row == 0) {
-        MediaVC *vc = [[MediaVC alloc] init];
+        DKVideoDetailVC *vc = [[DKVideoDetailVC alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }else if (indexPath.row == 1){
         DKFullScreenVC *vc = [[DKFullScreenVC alloc] init];
@@ -108,7 +109,7 @@
         [self.view addSubview:_tableView];
         [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(self.view);
-            make.top.equalTo(self.view);
+            make.top.equalTo(self.bar.mas_bottom);
             make.bottom.equalTo(self.view);
         }];
     }

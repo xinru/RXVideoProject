@@ -23,7 +23,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DKVideoModel.h"
 
+#define kVideoMainColor UIColorFromRGB(0x1890FF)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -57,6 +59,7 @@ NS_ASSUME_NONNULL_END
 
 @property (nonatomic, assign) BOOL isSelected;
 
+- (void)reloadData:(DKVideoModel *)model  index:(NSInteger)index;
 
 @end
 
@@ -76,10 +79,10 @@ typedef enum : NSUInteger {
 } IconType;
 @interface VideoSliderView : UIView
 
-- (instancetype)initWithType:(IconType)type;
+- (instancetype _Nullable )initWithType:(IconType)type;
 @property (nonatomic, assign) IconType type;
 
-@property (nonatomic, strong) NSString *totalTime;
+@property (nonatomic, strong) NSString * _Nullable totalTime;
 @property (nonatomic, assign) float value;
 
 @end

@@ -29,6 +29,8 @@
 @property (nonatomic, strong) NSURLSessionDownloadTask *downloadTask;
 @property (nonatomic, strong) NSMutableArray *videoList;
 
+@property (nonatomic, assign) DownloadType type;
+
 @end
 
 @implementation DKDownloadTask
@@ -43,8 +45,9 @@
     return instace;
 }
 //开始下载
-- (void)startDownloadVideoWithModel:(NSString *)urlStr
+- (void)startDownloadVideoWithModel:(NSString *)urlStr type:(DownloadType)type
 {
+    self.type = type;
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config
                                                           delegate:self
@@ -87,26 +90,60 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location
 {
-    //1.拿到cache文件夹的路径
-    NSString *cache=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
-    //2,拿到cache文件夹和文件名
-    NSString *file=[cache stringByAppendingPathComponent:downloadTask.response.suggestedFilename];
-    
-    [[NSFileManager defaultManager] moveItemAtURL:location toURL:[NSURL fileURLWithPath:file] error:nil];
-    //3，保存视频到相册
-    if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(file)) {
-        //保存相册核心代码
-        UISaveVideoAtPathToSavedPhotosAlbum(file, self, nil, nil);
+    if (self.type == DownloadTypeCourse) {
+        //1.拿到cache文件夹的路径
+        NSString *cache=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
+        //2,拿到cache文件夹和文件名
+        NSString *file=[cache stringByAppendingPathComponent:downloadTask.response.suggestedFilename];
+        
+        [[NSFileManager defaultManager] createFileAtPath:file contents:nil attributes:nil];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+                    self.refreshDownloadSuccessCellBlock(file);
+        });
+    }else{
+        //1.拿到cache文件夹的路径
+        NSString *cache=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
+        //2,拿到cache文件夹和文件名
+        NSString *file=[cache stringByAppendingPathComponent:downloadTask.response.suggestedFilename];
+        
+        [[NSFileManager defaultManager] moveItemAtURL:location toURL:[NSURL fileURLWithPath:file] error:nil];
+        //3，保存视频到相册
+        if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(file)) {
+            //保存相册核心代码
+            UISaveVideoAtPathToSavedPhotosAlbum(file, self, nil, nil);
+        }
+        
+        [MBProgressHUD showSuccessMessage:@"视频已保存到相册"];
+        
+        NSString *videoUrl = downloadTask.response.URL.description;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //        self.refreshDownloadSuccessCellBlock(videoUrl);
+        });
     }
     
-    [MBProgressHUD showSuccessMessage:@"视频已保存到相册"];
-    
-    NSString *videoUrl = downloadTask.response.URL.description;
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-//        self.refreshDownloadSuccessCellBlock(videoUrl);
-    });
 }
+
+
+#pragma mark ----------------------- 读取文件 ------------------------
+-(NSString *)readFileContent:(NSString *)documentsPath
+{
+    NSString *cache = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
+    NSString *iOSPath = [cache stringByAppendingPathComponent:documentsPath];
+    //    BOOL isHave = [self isSxistAtPath:iOSPath];
+    
+    BOOL isExist = [[NSFileManager defaultManager] fileExistsAtPath:iOSPath];
+//    NSString *content = [NSString stringWithContentsOfFile:iOSPath encoding:NSUTF8StringEncoding error:nil];
+//    NSLog(@"文件内容 = \n%@",content);
+    if (isExist) {
+        return iOSPath;
+    }else{
+        return @"";
+    }
+    
+}
+
 
 
 @end

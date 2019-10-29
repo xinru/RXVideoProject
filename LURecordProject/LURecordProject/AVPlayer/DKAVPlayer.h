@@ -29,37 +29,29 @@
 
 @interface DKAVPlayer : UIView
 
-- (instancetype)initWithFrame:(CGRect)frame isFullScreen:(BOOL)isFullScreen;
+- (instancetype)initWithFrame:(CGRect)frame
+                    superView:(UIView *)superView;
 
-//改为模型传输
-@property (nonatomic, strong) DKVideoModel *model;
+//播放状态isPlay YES 加载成功后直接播放  NO手动播放
+- (void)prepareForPlayWithModel:(DKVideoModel *)model isPlay:(BOOL)isPlay;
 
-
-//3Dbody项目中实现的功能，主要是为了实现更改集数，类似电视剧播放，可以选集
-////当前播放的第几章
-//@property (nonatomic, assign) NSInteger sectionIndex;
-////总课程列表
-//@property (nonatomic, strong) NSArray *sectionList;
-////是否已经购买
-//@property (nonatomic, assign) BOOL isBuy;
+//以下两个参数主要是为了实现选集功能，更改集数，可不传
+//当前播放的第几章
+@property (nonatomic, assign) NSInteger sectionIndex;
+//总列表
+@property (nonatomic, strong) NSArray *sectionList;
 
 
-//当前播放的value，断点播放
-@property (nonatomic, assign) CGFloat currentValue;
+//更换视频地址，用于外部刷新
+@property (nonatomic, copy) void (^refreshVideoUrlBlcok)(NSInteger sectionIndex);
+
+//退出全屏 当前播放的value，断点保存
+@property (nonatomic, copy) void (^dismissFullScreenBlcok)(NSInteger currentValue);
 
 //是否在播放
 @property (nonatomic, assign) BOOL isPlaying;
 
-@property (nonatomic, strong) AVPlayer *player;
-
-//退出全屏
-@property (nonatomic, copy) void (^dismissFullScreenBlcok)(void);
-
-@property (nonatomic, copy) void (^refreshVideoUrlBlcok)(NSInteger sectionId);
-
-//快进快退
-- (void)seekToTimePlay:(float)value isPlaying:(BOOL)isPlaying;
-
+//移除播放器
 - (void)removeAVPlayer;
 
 @end

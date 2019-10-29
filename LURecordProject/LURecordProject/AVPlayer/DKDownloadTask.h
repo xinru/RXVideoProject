@@ -25,17 +25,25 @@
 #import <Foundation/Foundation.h>
 //#import "MediaModel.h"
 
+typedef enum : NSUInteger {
+    DownloadTypeDefault,
+    DownloadTypeCourse,
+} DownloadType;
+
 @interface DKDownloadTask : NSObject
 
 + (instancetype)taskShared;
 //开始下载
-- (void)startDownloadVideoWithModel:(NSString *)urlStr;
+- (void)startDownloadVideoWithModel:(NSString *)urlStr type:(DownloadType)type;
 //删除下载
 - (void)deleteDownloadVideoWithIndex:(NSInteger)index;
 //暂停下载，当为-1时，是暂停所有下载
 - (void)pauseDownloadVideoWithIndex:(NSInteger)index;
 //继续下载
 - (void)continueDownloadVideo;
+
+//读取文件
+-(NSString *)readFileContent:(NSString *)documentsPath;
 
 //下载中刷新progressView
 @property (nonatomic, copy) void (^refreshSliderValueBlock)(CGFloat value, CGFloat currentBytes, CGFloat totalBytes, NSString *videoUrl);

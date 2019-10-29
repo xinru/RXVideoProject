@@ -28,19 +28,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DKVideoModel : NSObject
 
-//视频地址
+//视频地址，必传选项
 @property (nonatomic, strong) NSString *mediaUrlStr;
 //视频名称
 @property (nonatomic, strong) NSString *mediaName;
 //视频图片
 @property (nonatomic, strong) NSString *mediaImage;
 
-//不同清晰度的视频集
-//@property (nonatomic, strong) TransData *videoProfileUrlsDic;
+//不同清晰度的视频集，如不传，将不显示标清切换功能
+@property (nonatomic, strong) NSArray *videoProfileUrlsArray;
+
 //总时长 s
 @property (nonatomic, assign) NSInteger totalSeconds;
 //已经播放的时间
 @property (nonatomic, assign) NSInteger currentSeconds;
+
+//是否已经购买
+@property (nonatomic, assign) BOOL isBuy;
+
 
 @end
 

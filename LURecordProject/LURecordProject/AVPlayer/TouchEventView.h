@@ -15,28 +15,32 @@
  *                                       *
  *****************************************/
 //
-//  DKFullPlayerVC.h
+//  TouchEventView.h
 //  DookayProject
 //
-//  Created by dookay_73 on 2018/10/9.
-//  Copyright © 2018年 Dookay. All rights reserved.
+//  Created by dookay_73 on 2019/10/21.
+//  Copyright © 2019 Dookay. All rights reserved.
 //
 
-typedef NS_ENUM(NSUInteger, Direction) {
-    DirectionLeftOrRight,
-    DirectionUpOrDown,
-    DirectionNone
-};
-
 #import <UIKit/UIKit.h>
-#import "DKAVPlayer.h"
-#import <UIKit/UIView.h>
-@interface DKFullScreenVC : UIViewController
 
-@property (nonatomic, assign) BOOL statusBarHidden;
+NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, strong) DKVideoModel *model;
+@protocol TouchEventViewDelegate <NSObject>
 
-@property (nonatomic, copy) void (^quitFullScreenBlock)(CGFloat value);
+- (void)touchEventViewBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+- (void)touchEventViewMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+
+- (void)touchEventViewEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 
 @end
+
+@interface TouchEventView : UIView
+
+
+@property (nonatomic, weak) id<TouchEventViewDelegate> delegate;
+
+
+@end
+
+NS_ASSUME_NONNULL_END
