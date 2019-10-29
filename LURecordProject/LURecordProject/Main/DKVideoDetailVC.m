@@ -80,9 +80,10 @@
 #pragma mark - request模拟数据
 - (void)dk_requestCourseOutline
 {
-    NSArray *array = @[@{@"url":@"http://vd4.bdstatic.com/mda-jjtgnwfnvni42ysb/sc/mda-jjtgnwfnvni42ysb.mp4", @"duration":@"180", @"title":@"MV"},
-                       @{@"url":@"http://vd3.bdstatic.com/mda-ji1n0vxgcv51v0wc/sc/mda-ji1n0vxgcv51v0wc.mp4", @"duration":@"180", @"title":@"英语学习"},
-                       @{@"url":@"http://vd2.bdstatic.com/mda-jjdmkxxv4ki9zr7k/sc/mda-jjdmkxxv4ki9zr7k.mp4", @"duration":@"180", @"title":@"小猪佩奇"}];
+    NSArray *array = @[@{@"url":@"http://vd4.bdstatic.com/mda-jjtgnwfnvni42ysb/sc/mda-jjtgnwfnvni42ysb.mp4", @"duration":@"29", @"title":@"MV"},
+                       @{@"url":@"http://vd3.bdstatic.com/mda-ji1n0vxgcv51v0wc/sc/mda-ji1n0vxgcv51v0wc.mp4", @"duration":@"95", @"title":@"英语学习"},
+                       @{@"url":@"http://vd2.bdstatic.com/mda-jjdmkxxv4ki9zr7k/sc/mda-jjdmkxxv4ki9zr7k.mp4", @"duration":@"118", @"title":@"小猪佩奇"},
+    @{@"url":@"", @"duration":@"180", @"title":@"错误视频"}];
     _dataArray = [NSMutableArray array];
      for (NSDictionary *dataDic in array) {
          DKVideoModel *model = [[DKVideoModel alloc] init];

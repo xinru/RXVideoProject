@@ -270,6 +270,7 @@
     if (urlStr == nil) {
         return;
     }
+    
     _playerItem = [AVPlayerItem playerItemWithURL:urlStr];
     [_player replaceCurrentItemWithPlayerItem:_playerItem];
 
@@ -416,26 +417,29 @@
 
 {
     _model = model;
-    if (model.mediaUrlStr.length == 0) {
-        self.failPlayView.hidden = NO;
-        return;
-    }
+    _isReadToPlay = NO;
+    
+    [_player.currentItem cancelPendingSeeks];
+    [_player.currentItem.asset cancelLoading];
+    
     _isPlaying = isPlay;
     _totalSeconds = model.totalSeconds;
     _currentValue = model.currentSeconds;
-//解密处理是因为视频地址做了加密处理
-//    NSString * url = [mediaUrlStr copy];
-//    mediaUrlStr = [url LTAES128Decrypt];
-    
-
-    _mediaUrl = [self getMediaURL:model.mediaUrlStr];
     
     self.toolBar.mediaName = _model.mediaName;
-    
     [self getVideoTotalTime:model.mediaUrlStr];
     
-    [self buildAVPlayerWithMediaURL:_mediaUrl];
+    if (model.mediaUrlStr.length == 0) {
+        _isPlaying = NO;
+        self.failPlayView.hidden = NO;
+        [self pausePlay];
+        return;
+    }else{
+        _mediaUrl = [self getMediaURL:model.mediaUrlStr];
+        [self buildAVPlayerWithMediaURL:_mediaUrl];
+    }
 
+    
 }
 
 #pragma mark - 添加通知、kvo
@@ -472,6 +476,7 @@
 //    }
     
     _isPlaying = NO;
+    
     if (_isReadToPlay) {
 
         if (_isWifiPlay) {
@@ -507,9 +512,15 @@
         }
  
     }else{
-        if (_isFullScreen == NO) {
-            [MBProgressHUD showInfoMessage:@"视频正在加载中"];
+        
+        if (_model.mediaUrlStr.length == 0) {
+            
+        }else{
+            if (_isFullScreen == NO) {
+                [MBProgressHUD showInfoMessage:@"视频正在加载中"];
+            }
         }
+        
     }
    
     self.toolBar.isPlaying = _isPlaying;
@@ -524,7 +535,7 @@
     [self cancelTimer];
     [_player pause];
  
-  
+    self.mediaImageView.hidden = NO;
     self.toolBar.isPlaying = _isPlaying;
     self.smallToolBar.isPlaying = _isPlaying;
    
@@ -680,6 +691,9 @@
             }
                 break;
             default:
+            {
+                
+            }
                 break;
         }
     }

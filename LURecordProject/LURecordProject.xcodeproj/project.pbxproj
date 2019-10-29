@@ -60,8 +60,6 @@
 		8413BDA22367EB32008445BE /* DKDownloadTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413BD652367EB32008445BE /* DKDownloadTask.m */; };
 		8413BDA32367EB32008445BE /* DKSmallToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413BD682367EB32008445BE /* DKSmallToolBar.m */; };
 		8413BDA42367EB32008445BE /* RXSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413BD692367EB32008445BE /* RXSlider.m */; };
-		8413BDA52367EB32008445BE /* TouchEventView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413BD6A2367EB32008445BE /* TouchEventView.m */; };
-		8413BDA923682869008445BE /* video_nomal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8413BDA823682869008445BE /* video_nomal.png */; };
 		84892AAD2318C1EA00D34096 /* MediaListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84892AAC2318C1EA00D34096 /* MediaListVC.m */; };
 		84892B242318C91500D34096 /* UIAlertController+DY.m in Sources */ = {isa = PBXBuildFile; fileRef = 84892B232318C91500D34096 /* UIAlertController+DY.m */; };
 		84892B272318CD0D00D34096 /* VCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 84892B262318CD0D00D34096 /* VCManager.m */; };
@@ -119,7 +117,6 @@
 		8413BD2B2367EB32008445BE /* DKAVPlayerToolBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKAVPlayerToolBar.m; sourceTree = "<group>"; };
 		8413BD2C2367EB32008445BE /* DKSelectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKSelectView.m; sourceTree = "<group>"; };
 		8413BD2D2367EB32008445BE /* DKAVPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKAVPlayer.m; sourceTree = "<group>"; };
-		8413BD2E2367EB32008445BE /* TouchEventView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchEventView.h; sourceTree = "<group>"; };
 		8413BD2F2367EB32008445BE /* RXSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXSlider.h; sourceTree = "<group>"; };
 		8413BD302367EB32008445BE /* DKSmallToolBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKSmallToolBar.h; sourceTree = "<group>"; };
 		8413BD312367EB32008445BE /* DKFullScreenVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKFullScreenVC.m; sourceTree = "<group>"; };
@@ -174,10 +171,8 @@
 		8413BD672367EB32008445BE /* DKSelectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKSelectView.h; sourceTree = "<group>"; };
 		8413BD682367EB32008445BE /* DKSmallToolBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKSmallToolBar.m; sourceTree = "<group>"; };
 		8413BD692367EB32008445BE /* RXSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXSlider.m; sourceTree = "<group>"; };
-		8413BD6A2367EB32008445BE /* TouchEventView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TouchEventView.m; sourceTree = "<group>"; };
 		8413BD6B2367EB32008445BE /* DKVideoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKVideoModel.h; sourceTree = "<group>"; };
 		8413BD6C2367EB32008445BE /* DKFullScreenVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKFullScreenVC.h; sourceTree = "<group>"; };
-		8413BDA823682869008445BE /* video_nomal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = video_nomal.png; sourceTree = "<group>"; };
 		84892AAB2318C1EA00D34096 /* MediaListVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaListVC.h; sourceTree = "<group>"; };
 		84892AAC2318C1EA00D34096 /* MediaListVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaListVC.m; sourceTree = "<group>"; };
 		84892B222318C91500D34096 /* UIAlertController+DY.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+DY.h"; sourceTree = "<group>"; };
@@ -311,8 +306,6 @@
 				8413BD342367EB32008445BE /* Resouce */,
 				8413BD2F2367EB32008445BE /* RXSlider.h */,
 				8413BD692367EB32008445BE /* RXSlider.m */,
-				8413BD2E2367EB32008445BE /* TouchEventView.h */,
-				8413BD6A2367EB32008445BE /* TouchEventView.m */,
 			);
 			path = AVPlayer;
 			sourceTree = "<group>";
@@ -364,7 +357,6 @@
 				8413BD4C2367EB32008445BE /* voice_min.png */,
 				8413BD3D2367EB32008445BE /* voice_min@2x.png */,
 				8413BD3B2367EB32008445BE /* voice_min@3x.png */,
-				8413BDA823682869008445BE /* video_nomal.png */,
 			);
 			path = Resouce;
 			sourceTree = "<group>";
@@ -613,7 +605,6 @@
 				8413BD992367EB32008445BE /* next_video@3x.png in Resources */,
 				8413BD8B2367EB32008445BE /* fullScreen@2x.png in Resources */,
 				8413BD732367EB32008445BE /* pause_play@3x.png in Resources */,
-				8413BDA923682869008445BE /* video_nomal.png in Resources */,
 				8413BD742367EB32008445BE /* voice_max@3x.png in Resources */,
 				8413BD9F2367EB32008445BE /* sun_min@3x.png in Resources */,
 				8413BD802367EB32008445BE /* video_unLock@3x.png in Resources */,
@@ -741,7 +732,6 @@
 				8413BDA32367EB32008445BE /* DKSmallToolBar.m in Sources */,
 				84E0681E218855A0002C06E5 /* MyTool.m in Sources */,
 				8413BDA42367EB32008445BE /* RXSlider.m in Sources */,
-				8413BDA52367EB32008445BE /* TouchEventView.m in Sources */,
 				84E068002188497C002C06E5 /* GlobalConfig.m in Sources */,
 				8413BD702367EB32008445BE /* DKFullScreenVC.m in Sources */,
 				84E067CB2187FFA3002C06E5 /* main.m in Sources */,

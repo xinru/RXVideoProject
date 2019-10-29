@@ -37,13 +37,14 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if ([super initWithFrame:frame]) {
+        WS(weakSelf);
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithActionBlock:^(id  _Nonnull sender) {
             CGPoint touchPoint = [sender locationInView:self];
               CGFloat value = (self.maximumValue - self.minimumValue) * (touchPoint.x / self.frame.size.width );
               [self setValue:value animated:YES];
             
-            if (_sliderChangedBlock) {
-                _sliderChangedBlock(value);
+            if (weakSelf.sliderChangedBlock) {
+                weakSelf.sliderChangedBlock(value);
             }
 
         }];
