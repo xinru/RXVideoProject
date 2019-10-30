@@ -43,7 +43,7 @@
     // Do any additional setup after loading the view.
 //    self.bar.title = @"视频播放器";
     
-    _dataArray = @[@"观看视频",@"全屏视频",@"本地视频"];
+    _dataArray = @[@"观看视频",@"全屏视频"];
     [self tableView];
 }
 
