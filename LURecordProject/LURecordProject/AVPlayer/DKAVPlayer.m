@@ -124,45 +124,60 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
+- (instancetype)initWithFullScreen
+{
+    if ([super init]) {
+        [self prepareAVPlayer];
+        _isFullScreen = YES;
+        [self fullScreenAction];
+    }
+    return self;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame superView:(UIView *)superView
 {
     if ([super initWithFrame:frame]) {
         
         self.superView = superView;
         
-        self.backgroundColor = [UIColor blackColor];
-
-        //忽略静音按钮
-        AVAudioSession *session =[AVAudioSession sharedInstance];
-        [session setCategory:AVAudioSessionCategoryPlayback error:nil];
-        
-        _isReadToPlay = NO;
-        _isFullScreen = NO;
-        _isLocateVideo = NO;
-        _videoRate = 1.0;//默认正常速度播放
-        _totalSeconds = 0;
-        _isWifiPlay = YES;
-        //播放器
-        _player = [[AVPlayer alloc] init];
-        _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-        _playerLayer.frame = self.bounds;
-        _playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-        [self.layer addSublayer:_playerLayer];
-        _playerLayer.backgroundColor = [UIColor clearColor].CGColor;
-        
-//        UI
-        [self createSubViews];
-        [self getSystemVolumSlider];
-        
-        [self addGestureRecognizerAction];
-        
-//        测试视频地址
-//        DKVideoModel *model = [[DKVideoModel alloc] init];
-//        model.mediaUrlStr = @"http://v.dansewudao.com/444fccb3590845a799459f6154d2833f/fe86a70dc4b8497f828eaa19058639ba-6e51c667edc099f5b9871e93d0370245-sd.mp4";
-//        model.totalSeconds = 7166;
-//        _model = model;
+        [self prepareAVPlayer];
     }
     return self;
+}
+
+- (void)prepareAVPlayer
+{
+     self.backgroundColor = [UIColor blackColor];
+
+            //忽略静音按钮
+            AVAudioSession *session =[AVAudioSession sharedInstance];
+            [session setCategory:AVAudioSessionCategoryPlayback error:nil];
+            
+            _isReadToPlay = NO;
+            _isFullScreen = NO;
+            _isLocateVideo = NO;
+            _videoRate = 1.0;//默认正常速度播放
+            _totalSeconds = 0;
+            _isWifiPlay = YES;
+            //播放器
+            _player = [[AVPlayer alloc] init];
+            _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+            _playerLayer.frame = self.bounds;
+            _playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+            [self.layer addSublayer:_playerLayer];
+            _playerLayer.backgroundColor = [UIColor clearColor].CGColor;
+            
+    //        UI
+            [self createSubViews];
+            [self getSystemVolumSlider];
+            
+            [self addGestureRecognizerAction];
+            
+    //        测试视频地址
+    //        DKVideoModel *model = [[DKVideoModel alloc] init];
+    //        model.mediaUrlStr = @"http://v.dansewudao.com/444fccb3590845a799459f6154d2833f/fe86a70dc4b8497f828eaa19058639ba-6e51c667edc099f5b9871e93d0370245-sd.mp4";
+    //        model.totalSeconds = 7166;
+    //        _model = model;
 }
 //屏幕单击、双击
 - (void)addGestureRecognizerAction
@@ -198,6 +213,7 @@
     [self addGestureRecognizer:tapGest];
     
 }
+//导航栏、弹窗
 - (void)createSubViews
 {
     //视频截图/未播放时的默认图
@@ -321,18 +337,22 @@
         
     }else{
         [_fullPlayerVC dismissViewControllerAnimated:NO completion:nil];
-        [_superView addSubview:self];
-        
+        if (_superView) {
+            [_superView addSubview:self];
+            
 
-        CGFloat topY = 64;
-        if (IS_IPHONE_X) {
-            topY = 44 + X_head;
+            CGFloat topY = 64;
+            if (IS_IPHONE_X) {
+                topY = 44 + X_head;
+            }
+            [self mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.right.left.equalTo(_superView);
+                make.top.equalTo(_superView).offset(topY);
+                make.height.mas_equalTo(210*ScaleX);
+            }];
+        }else{
+            [self removeAVPlayer];
         }
-        [self mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.left.equalTo(_superView);
-            make.top.equalTo(_superView).offset(topY);
-            make.height.mas_equalTo(210*ScaleX);
-        }];
         
         [_toolBarTimer invalidate];
         _toolBarTimer = nil;

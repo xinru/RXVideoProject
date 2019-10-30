@@ -29,8 +29,13 @@
 
 @interface DKAVPlayer : UIView
 
+//竖屏到横屏播放
 - (instancetype)initWithFrame:(CGRect)frame
                     superView:(UIView *)superView;
+
+//只有横屏播放
+- (instancetype)initWithFullScreen;
+
 
 //播放状态isPlay YES 加载成功后直接播放  NO手动播放
 - (void)prepareForPlayWithModel:(DKVideoModel *)model isPlay:(BOOL)isPlay;

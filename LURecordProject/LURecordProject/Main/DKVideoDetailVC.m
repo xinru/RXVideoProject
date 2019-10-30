@@ -96,8 +96,8 @@
    
      DKVideoModel *videoModel = _dataArray[_index];
 //    此选项用于实现选集功能，如不需要可不填
-//     _avPlayer.sectionList = _dataArray;
-//     _avPlayer.sectionIndex = _index;
+     _avPlayer.sectionList = _dataArray;
+     _avPlayer.sectionIndex = _index;
     
      [_avPlayer prepareForPlayWithModel:videoModel isPlay:YES];
     

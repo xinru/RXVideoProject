@@ -35,8 +35,5 @@ typedef NS_ENUM(NSUInteger, Direction) {
 
 @property (nonatomic, assign) BOOL statusBarHidden;
 
-@property (nonatomic, strong) DKVideoModel *model;
-
-@property (nonatomic, copy) void (^quitFullScreenBlock)(CGFloat value);
 
 @end

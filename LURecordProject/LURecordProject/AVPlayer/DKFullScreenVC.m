@@ -53,11 +53,7 @@
                                              selector:@selector(changeBarHidden)
                                                  name:@"CHANGESTATUSBARHIDDEN"
                                                object:nil];
-    
-//    if (_avPlayer == nil) {
-//        [self createPlayer];
-//    }
-    
+ 
 }
 
 - (void)changeBarHidden
@@ -92,24 +88,6 @@
         [invocation setArgument:&val atIndex:2];
         [invocation invoke];
     }
-}
-#pragma mark - 创建播放器
-- (void)createPlayer
-{
-    _avPlayer = [[DKAVPlayer alloc] initWithFrame:CGRectZero superView:self.view];
-    [_avPlayer prepareForPlayWithModel:_model isPlay:YES];
-    [self.view addSubview:_avPlayer];
-    WS(weakSelf);
-    _avPlayer.dismissFullScreenBlcok = ^(NSInteger currentValue) {
-
-        if (weakSelf.quitFullScreenBlock) {
-            weakSelf.quitFullScreenBlock(currentValue);
-        }
-        [weakSelf dismissViewControllerAnimated:NO completion:nil];
-    };
-    [_avPlayer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view);
-    }];
 }
 
 #pragma mark - 横屏代码

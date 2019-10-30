@@ -57,7 +57,7 @@
 {
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"listCell"];
     cell.textLabel.text = _dataArray[indexPath.row];
-    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 
@@ -81,8 +81,15 @@
         DKVideoDetailVC *vc = [[DKVideoDetailVC alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }else if (indexPath.row == 1){
-        DKFullScreenVC *vc = [[DKFullScreenVC alloc] init];
-        [self presentViewController:vc animated:NO completion:nil];
+        DKAVPlayer *player = [[DKAVPlayer alloc] initWithFullScreen];
+        
+        DKVideoModel *model = [[DKVideoModel alloc] init];
+        model.mediaUrlStr = @"http://v.dansewudao.com/444fccb3590845a799459f6154d2833f/fe86a70dc4b8497f828eaa19058639ba-6e51c667edc099f5b9871e93d0370245-sd.mp4";
+        model.totalSeconds = 7166;
+        model.mediaName = @"尊巴";
+        
+        [player prepareForPlayWithModel:model isPlay:NO];
+        
     }else{
         
     }
