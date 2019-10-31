@@ -622,11 +622,14 @@
         [self.toolBar setIsPlaying:NO];
         self.smallToolBar.isPlaying = NO;
         
-        _sectionIndex = _sectionIndex+1;
-        if (_sectionIndex >= _sectionList.count) {
-            _sectionIndex = _sectionList.count-1;
+        if (_sectionList.count > 0) {
+            _sectionIndex = _sectionIndex+1;
+            if (_sectionIndex >= _sectionList.count) {
+                _sectionIndex = _sectionList.count-1;
+            }
+            [self refreshVideoUrlWithIndex:_sectionIndex];
         }
-        [self refreshVideoUrlWithIndex:_sectionIndex];
+        
     }
 }
 

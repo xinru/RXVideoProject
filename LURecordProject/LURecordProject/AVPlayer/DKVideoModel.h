@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger currentSeconds;
 
 //是否已经购买
-@property (nonatomic, assign) BOOL isBuy;
+//@property (nonatomic, assign) BOOL isBuy;
 
 
 @end

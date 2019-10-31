@@ -177,6 +177,7 @@
     _dataArray = dataArray;
     if (_dataArray.count <= 0) {
         self.anthonyBtn.hidden = YES;
+        self.nextBtn.hidden = YES;
     }
 }
 - (void)setProfileArray:(NSArray *)profileArray
